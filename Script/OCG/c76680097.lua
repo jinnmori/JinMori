@@ -66,7 +66,7 @@ end
 function s.redfilter(c)
   return c:IsSetCard(SET_RED_DRAGON_ARCHFIEND) and c:IsType(TYPE_SYNCHRO)
   end
-function s.sdtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.sdtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
  local ct=Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)
  if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and s.redfilter(chkc) end
 	if chk==0 then return Duel.IsExistingMatchingCard(s.sdfilter,tp,LOCATION_DECK,0,1,nil) and Duel.IsExistingMatchingCard(nil,tp,0,LOCATION_MZONE,1,nil)
