@@ -82,8 +82,8 @@ end
 function s.emfilter(c)
 	return c:IsSetCard(SET_PERFORMAPAL) and c:IsType(TYPE_PENDULUM)
 	end
-function s.thtg2(e,tp,eg,ep,ev,re,r,rp,chk)
-if chkc then return false end
+function s.thtg2(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and s.emfilter(chkc) end
 	if chk==0 then return Duel.IsExistingTarget(s.emfilter,tp,LOCATION_MZONE,0,1,e:GetHandler())
 	   and Duel.IsExistingTarget(nil,tp,0,LOCATION_ONFIELD,1,nil) end
 	 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,nil,nil,tp,0)
