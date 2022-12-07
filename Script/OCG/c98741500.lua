@@ -39,7 +39,7 @@ function s.rescon(c)
 		return c:CheckFusionMaterial(sg) and Duel.GetMZoneCount(tp,sg)>0
 	end
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
   local c=e:GetHandler()
 	if chkc then return chkc:IsLocation(LOCATION_MZONE+LOCATION_GRAVE) and chkc:IsControler(tp) and s.filter(chkc,e,tp) end
 	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_MZONE+LOCATION_GRAVE,0,1,nil,e,tp) and (c:IsLocation(LOCATION_HAND) 
