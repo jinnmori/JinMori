@@ -22,6 +22,7 @@ function s.initial_effect(c)
 	--Send to Grave
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,0))
+	e3:SetCategory(CATEGORY_TOGRAVE)
 	e3:SetType(EFFECT_TYPE_QUICK_O)
 	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e3:SetCode(EVENT_FREE_CHAIN)
@@ -67,14 +68,15 @@ function s.chainop(e)
 	Duel.ChainAttack()
 end
 function s.filter(c)
-	return c:IsFaceup()
+	return c:IsFaceup() and c:IsAbleToGrave()
 end
 function s.grtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
   local c=e:GetHandler()
-	if chkc then return chkc:IsLocation(LOCATION_ONFIELD) end
-	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,c) end
+	if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and s.filter(chkc) end
+	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,0,LOCATION_ONFIELD,1,c) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-	Duel.SelectTarget(tp,s.filter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,c)
+	local g=Duel.SelectTarget(tp,s.filter,tp,0,LOCATION_ONFIELD,1,1,c)
+	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,g,1,tp,LOCATION_ONFIELD)
 end
 function s.bwfilter(c)
 	return c:IsSetCard(SET_BLUE_EYES) and c:IsMonster()
