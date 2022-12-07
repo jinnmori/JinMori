@@ -8,8 +8,8 @@ function s.initial_effect(c)
 	--Spsummon success
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
-	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e2:SetProperty(EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e2:SetTarget(s.sumtg)
 	e2:SetOperation(s.sumop)
@@ -17,7 +17,9 @@ function s.initial_effect(c)
 	--Destroy 1 card your opponent controls
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,2))
+	e3:SetCategory(CATEGORY_DESTROY)
 	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e3:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CARD_TARGET)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCode(EVENT_TO_DECK)
 	e3:SetCondition(s.condition)
@@ -65,16 +67,14 @@ end
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return (r&REASON_EFFECT)~=0 and eg:IsExists(s.cfilter,1,nil,tp)
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	local g=Duel.GetMatchingGroup(nil,tp,0,LOCATION_ONFIELD,nil)
-	if chk==0 then return #g>0 end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsLocation(LOCATION_ONFIELD) end
+	if chk==0 then return Duel.IsExistingTarget(nil,tp,0,LOCATION_ONFIELD,1,nil) end
+	local g=Duel.SelectTarget(tp,nil,tp,0,LOCATION_ONFIELD,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-	local g=Duel.SelectMatchingCard(tp,nil,tp,0,LOCATION_ONFIELD,1,1,nil)
-	if #g>0 then
-		Duel.HintSelection(g)
-		Duel.Destroy(g,REASON_EFFECT)
+	local tc=Duel.GetFirstTarget()
+		Duel.Destroy(tc,REASON_EFFECT)
 	end
-end
