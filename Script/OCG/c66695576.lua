@@ -9,7 +9,7 @@ function s.initial_effect(c)
 	--Target 1 card on the field
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetCategory(CATEGORY_TODECK+CATEGORY_DRAW)
+	e1:SetCategory(CATEGORY_TOHAND)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
@@ -39,16 +39,20 @@ function s.retcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return c:IsSummonType(SUMMON_TYPE_FUSION)
 end
-function s.rettg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingTarget(nil,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil,e,tp) end
+function s.rettg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+  local c=e:GetHandler()
+  if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsAbleToHand() end
+  if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToHand,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,c) end
+  local g=Duel.SelectTarget(tp,Card.IsAbleToHand,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,c)
+  Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,0,0)
 end
 function s.retop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.SelectTarget(tp,nil,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil,e,tp)
-	if #g==0 or Duel.SendtoHand(g,nil,REASON_EFFECT)==0 then return end
+  local tc=Duel.GetFirstTarget()
+	if tc==0 or Duel.SendtoHand(tc,nil,REASON_EFFECT)==0 then return end
 	local sg=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,nil)
 	if Duel.SelectYesNo(tp,aux.Stringid(id,1)) and #sg>0 then
 	Duel.DiscardHand(tp,nil,1,1,REASON_EFFECT+REASON_DISCARD)
-	end
+   end
 end
 function s.disccon(e,tp,eg,ep,ev,re,r,rp)
 local c=e:GetHandler()
@@ -69,3 +73,5 @@ function s.discop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.Remove(sg,POS_FACEDOWN,REASON_EFFECT)
 	end
 end
+
+		
