@@ -34,7 +34,6 @@ function s.initial_effect(c)
 	e3:SetTarget(s.intg)
 	e3:SetOperation(s.inop)
 	c:RegisterEffect(e3)
-	c:RegisterEffect(e3)
 end
 s.listed_series={SET_BLUE_EYES}
 s.listed_names={CARD_BLUEEYES_W_DRAGON,23995346}
