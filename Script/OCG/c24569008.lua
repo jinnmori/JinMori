@@ -29,8 +29,9 @@ function s.initial_effect(c)
 	return c:IsType(TYPE_MONSTER) and c:IsFaceup() and c:GetAttribute(attribute)
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+  if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.filter(chkc,att)
 	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,0,LOCATION_MZONE,1,nil,att) end
-	local g=Duel.SelectTarget(tp,s.filter,tp,0,LOCATION_MZONE,1,1,nil)
+	local g=Duel.SelectTarget(tp,s.filter,tp,0,LOCATION_MZONE,1,1,nil,att)
 	local att=g:GetFirst():GetAttribute()
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
