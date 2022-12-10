@@ -71,10 +71,12 @@ function s.spfilter(c,e,tp)
  or c:IsLocation(LOCATION_GRAVE))
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_GRAVE+LOCATION_HAND+LOCATION_EXTRA,0,1,nil,e,tp) end
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and 
+	Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_GRAVE+LOCATION_HAND+LOCATION_EXTRA,0,1,nil,e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_GRAVE+LOCATION_HAND+LOCATION_EXTRA)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
+  if Duel.GetLocationCount(tp,LOCATION_MZONE)<1 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local c=e:GetHandler()
 	local g=Duel.SelectMatchingCard(tp,aux.NecroValleyFilter(s.spfilter),tp,LOCATION_GRAVE+LOCATION_HAND+LOCATION_EXTRA,0,1,1,nil,e,tp)
@@ -150,3 +152,4 @@ end
 function s.damop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Damage(tp,1000,REASON_EFFECT)
 end
+
