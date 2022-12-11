@@ -1,4 +1,6 @@
 --Performapal Joker Mage
+--My favourite Card
+--Scripted by Marbela
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
@@ -9,7 +11,8 @@ function s.initial_effect(c)
 	--Shuffle 1 Card
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetType(EFFECT_TYPE_IGNITION+EFFECT_TYPE_TRIGGER_F)
+	e1:SetCategory(CATEGORY_TODECK+CATEGORY_DRAW)
+	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1)
@@ -46,32 +49,31 @@ function s.initial_effect(c)
 	e4:SetOperation(s.xyzop)
 	c:RegisterEffect(e4)
 end
-	s.listed_series={SET_PERFORMAPAL,SET_MAGICIAN,SET_ODD_EYES }
+	s.listed_series={SET_PERFORMAPAL,SET_MAGICIAN,SET_ODD_EYES}
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsControler(1-tp) end
-	if chk==0 then return Duel.IsExistingTarget(nil,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+local c=e:GetHandler()
+if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and (chkc:IsControler(1-tp) or chkc:IsControler(tp)) end
+	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,c,tp) and (Duel.IsPlayerCanDraw(tp,1)
+	   or Duel.IsPlayerCanDraw(1-tp,1)) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
-	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,PLAYER_EITHER,1)
+	local tc=Duel.SelectTarget(tp,s.filter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,c,tp)
+	Duel.SetOperationInfo(0,CATEGORY_TODECK+CATEGORY_DRAW,nil,0,PLAYER_EITHER,1)
 end
 function s.filter(c,tp)
-	return c:GetOwner()==tp
+	return c:GetOwner()==tp or c:GetOwner()==1-tp
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
-local fc=Duel.SelectTarget(tp,nil,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
-local tc=fc:GetFirst()
-	Duel.SendtoDeck(tc,nil,SEQ_DECKSHUFFLE,REASON_EFFECT)
-	if not fc:IsExists(Card.IsLocation,1,nil,LOCATION_DECK) then return end
-	local ct=fc:FilterCount(Card.IsLocation,nil,LOCATION_DECK+LOCATION_EXTRA)
-	local dg=Duel.GetOperatedGroup()
-		local draw1=dg:FilterCount(s.filter,nil,tp)
-		local draw2=dg:FilterCount(s.filter,nil,1-tp)
-		if Duel.IsPlayerCanDraw(tp,1) then
-	     Duel.Draw(tp,draw1*1,REASON_EFFECT)
-	   if Duel.IsPlayerCanDraw(1-tp,1) then
-	     Duel.Draw(1-tp,draw2*1,REASON_EFFECT)
-	             end
+local tc=Duel.GetFirstTarget()
+if not tc:IsRelateToEffect(e) then return end
+	if Duel.SendtoDeck(tc,nil,1,REASON_EFFECT)>0 and tc:IsLocation(LOCATION_EXTRA) then
+	    Duel.DisableShuffleCheck(true)
+	     Duel.BreakEffect()
+	     Duel.Draw(tc:GetControler(),1,REASON_EFFECT)		
+	 else
+	Duel.ShuffleDeck(tc:GetControler())
+	Duel.Draw(tc:GetControler(),1,REASON_EFFECT)		
+	            end
 	          end
-        end
 function s.perfilter(c)
 	return c:IsFacedown() or not (c:IsSetCard(SET_PERFORMAPAL) or (c:IsSetCard(SET_MAGICIAN) and c:IsType(TYPE_PENDULUM)) or c:IsSetCard(SET_ODD_EYES ))
 end
