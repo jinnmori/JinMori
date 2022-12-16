@@ -31,8 +31,10 @@ function s.initial_effect(c)
 	e3:SetOperation(s.atop)
 	c:RegisterEffect(e3)
 	end
-function s.imcon(e)
-	return not Duel.IsExistingMatchingCard(aux.NOT(aux.FaceupFilter(Card.IsType,TYPE_LINK)),e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+function s.imcon(e,tp)
+	local g=Duel.GetFieldGroup(tp,LOCATION_MZONE,0)
+	return #g>0 and g:FilterCount(aux.FaceupFilter(Card.IsType,TYPE_LINK),nil)==#g
+	end 
  end 
 	function s.imfilter(e,te)
 	return te:GetOwner()~=e:GetOwner()
