@@ -68,7 +68,7 @@ function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.spfilter(c,e,tp)
   if c:IsLocation(LOCATION_EXTRA) and Duel.GetLocationCountFromEx(tp,tp,nil,c)==0 then return false end
- return c:IsSetCard(SET_DDD) and not c:IsCode(id) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP) and (c:IsFaceup() or c:IsLocation(LOCATION_HAND)
+	return c:IsSetCard(SET_DDD) and not c:IsCode(id) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP) and (c:IsFaceup() or c:IsLocation(LOCATION_HAND)
  or c:IsLocation(LOCATION_GRAVE))
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -153,4 +153,3 @@ end
 function s.damop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Damage(tp,1000,REASON_EFFECT)
 end
-
