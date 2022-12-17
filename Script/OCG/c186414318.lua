@@ -31,11 +31,11 @@ function s.initial_effect(c)
 	e3:SetOperation(s.atop)
 	c:RegisterEffect(e3)
 	end
-function s.imcon(e,tp)
+function s.imcon(e)
+	local tp=e:GetHandlerPlayer()
 	local g=Duel.GetFieldGroup(tp,LOCATION_MZONE,0)
 	return #g>0 and g:FilterCount(aux.FaceupFilter(Card.IsType,TYPE_LINK),nil)==#g
 	end 
- end 
 	function s.imfilter(e,te)
 	return te:GetOwner()~=e:GetOwner()
 end

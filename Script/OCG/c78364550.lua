@@ -79,7 +79,8 @@ function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
 	local bc=tc:GetBattleTarget()
 	return #eg==1 and tc:IsControler(tp) and  ((tc:IsRace(RACE_DRAGON) and tc:IsAttribute(ATTRIBUTE_DARK) and tc:IsType(TYPE_SYNCHRO)) 
-        or (tc:IsSetCard(SET_RESONATOR) and tc:IsMonster())) and bc:IsReason(REASON_BATTLE) and (bc:GetBattlePosition()&POS_DEFENSE)~=0
+	  or (tc:IsSetCard(SET_RESONATOR) and tc:IsMonster()))
+	  and bc:IsReason(REASON_BATTLE) and (bc:GetBattlePosition()&POS_DEFENSE)~=0
 end
 function s.spfilter(c,e,tp)
   return c:IsLevelBelow(5) and (c:IsRace(RACE_DRAGON) or c:IsRace(RACE_FIEND) or c:IsRace(RACE_WARRIOR)) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)

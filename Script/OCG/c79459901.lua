@@ -8,13 +8,13 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_HAND)
 	e1:SetCountLimit(1,id)
-        e1:SetTarget(s.nttg)
+  e1:SetTarget(s.nttg)
 	e1:SetOperation(s.ntop)
 	c:RegisterEffect(e1)
 	end
 function s.filter(c,e,tp)
-  return c:IsMonster() 
-  end
+  return c:IsMonster()
+end
 function s.nttg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) end
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

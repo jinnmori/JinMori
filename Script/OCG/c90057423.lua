@@ -59,7 +59,7 @@ function s.filter(c)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 local c=e:GetHandler()
-if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and s.filter(chkc)
+if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and s.filter(chkc) end
 if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_MZONE,0,1,c) end
 Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
 local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_MZONE,0,1,1,c)
@@ -80,7 +80,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 		--then this card's rank becomes 8
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EEFFECT_CHANGE_RANK)
+		e1:SetCode(EFFECT_CHANGE_RANK)
 		e1:SetValue(8)
 		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 		e1:SetRange(LOCATION_MZONE)

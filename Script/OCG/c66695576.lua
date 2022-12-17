@@ -42,9 +42,9 @@ end
 function s.rettg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
   local c=e:GetHandler()
   if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsAbleToHand() end
-  if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToHand,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,c) end
-  local g=Duel.SelectTarget(tp,Card.IsAbleToHand,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,c)
-  Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,0,0)
+	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToHand,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,c) end
+	local g=Duel.SelectTarget(tp,Card.IsAbleToHand,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,c)
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,0,0)
 end
 function s.retop(e,tp,eg,ep,ev,re,r,rp)
   local tc=Duel.GetFirstTarget()
@@ -52,7 +52,7 @@ function s.retop(e,tp,eg,ep,ev,re,r,rp)
 	local sg=Duel.GetMatchingGroup(Card.IsDiscardable,tp,LOCATION_HAND,0,nil)
 	if Duel.SelectYesNo(tp,aux.Stringid(id,1)) and #sg>0 then
 	Duel.DiscardHand(tp,nil,1,1,REASON_EFFECT+REASON_DISCARD)
-   end
+	end
 end
 function s.disccon(e,tp,eg,ep,ev,re,r,rp)
 local c=e:GetHandler()
@@ -73,5 +73,3 @@ function s.discop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.Remove(sg,POS_FACEDOWN,REASON_EFFECT)
 	end
 end
-
-		
