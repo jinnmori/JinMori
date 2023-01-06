@@ -25,11 +25,11 @@ function s.initial_effect(c)
 	e4:SetOperation(s.atkop)
 	c:RegisterEffect(e4)
 	end
-	function s.filter(c,attribute)
+function s.filter(c,attribute)
 	return c:IsType(TYPE_MONSTER) and c:IsFaceup() and c:GetAttribute(attribute)
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-  if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.filter(chkc,att)
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.filter(chkc,att) end
 	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,0,LOCATION_MZONE,1,nil,att) end
 	local g=Duel.SelectTarget(tp,s.filter,tp,0,LOCATION_MZONE,1,1,nil,att)
 	local att=g:GetFirst():GetAttribute()
