@@ -44,7 +44,7 @@ end
 function s.cfilter(c,g)
 	return g:IsContains(c) and not c:IsLevel(12)
 end
-function s.spfilter(c)
+function s.spfilter(c,e,tp)
 	return c:IsMonster() and c:IsSetCard(SET_FORTUNE_LADY) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP)
 end
 function s.doefftg(e,tp,eg,ep,ev,re,r,rp,chk)
