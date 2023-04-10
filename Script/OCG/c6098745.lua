@@ -64,7 +64,7 @@ function s.doefftg(e,tp,eg,ep,ev,re,r,rp,chk)
 		elseif op==2 then
 		  e:SetCategory(CATEGORY_SPECIAL_SUMMON)
 		  local g1=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_DECK+LOCATION_HAND,0,nil,e,tp)
-			Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g1,1,tp,LOCATION_GRAVE+LOCATION_HAND)
+			Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g1,1,tp,LOCATION_DECK+LOCATION_HAND)
 		 end
 	end
 function s.doeffop(e,tp,eg,ep,ev,re,r,rp)
