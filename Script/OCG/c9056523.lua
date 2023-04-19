@@ -52,7 +52,8 @@ function s.extraval(chk,summon_type,e,...)
 			s.curgroup:KeepAlive()
 			return s.curgroup
 		end
-	elseif chk==2 then
+	elseif chk==2
+		then
 		if s.curgroup then
 			s.curgroup:DeleteGroup()
 		end

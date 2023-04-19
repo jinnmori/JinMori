@@ -43,7 +43,9 @@ c:SetUniqueOnField(1,0,id)
 	e2:SetTarget(s.rmtg)
 	e2:SetOperation(s.rmop)
 	c:RegisterEffect(e2)
-	end
+end
+s.synchro_tuner_required=1
+s.synchro_nt_required=1
 --the fun begins
 s.listed_names={60800381}
 function s.spfilter1(c)
