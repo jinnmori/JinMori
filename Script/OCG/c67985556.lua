@@ -88,10 +88,9 @@ end
 function s.dartg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return eg:IsContains(chkc) end
 	if chk==0 then return eg:IsExists(s.darconfilter,1,nil,tp) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
 	local g=eg:FilterSelect(tp,s.darconfilter,1,1,nil,tp)
 	Duel.SetTargetCard(g)
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,tp,0)
 end
 function s.darop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()

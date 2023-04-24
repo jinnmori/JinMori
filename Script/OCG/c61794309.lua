@@ -112,20 +112,6 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	if #sg>0 then
 		Duel.Destroy(sg,REASON_EFFECT)
   end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local ct=e:GetLabel()
-	if ct>0 then
-		local e1=Effect.CreateEffect(c)
-		e1:SetDescription(aux.Stringid(id,4))
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetProperty(EFFECT_FLAG_CLIENT_HINT)
-		e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE+RESET_PHASE+PHASE_END)
-		c:RegisterEffect(e1)
-	end
-		c:RegisterEffect(e1)
-	end
-end
 function s.pencon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return (r&REASON_EFFECT+REASON_BATTLE)~=0 and c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()
