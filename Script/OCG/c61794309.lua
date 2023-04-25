@@ -111,6 +111,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local sg=Duel.GetFieldGroup(tp,0,LOCATION_ONFIELD)
 	if #sg>0 then
 		Duel.Destroy(sg,REASON_EFFECT)
+		end
   end
 function s.pencon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
