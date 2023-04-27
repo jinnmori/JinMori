@@ -4,7 +4,7 @@ function s.initial_effect(c)
 	--Synchro Summon procedure
 	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTuner(nil),1,99)
 	c:EnableReviveLimit()
-	--target mang cards your opponent controls, shuffle them back to deck
+	--target many cards your opponent controls, shuffle them back to deck
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TODECK)
