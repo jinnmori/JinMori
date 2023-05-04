@@ -102,8 +102,8 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Destroy(e:GetLabelObject(),REASON_EFFECT)
 end
 function s.discon(e,tp,eg,ep,ev,re,r,rp)
-  return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and re:IsActiveType(TYPE_SPELL+TYPE_TRAP) and
-            ep==1-tp and Duel.IsChainNegatable(ev) and Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsEvenScale),e:GetHandlerPlayer(),LOCATION_PZONE,0,1,nil)
+  return re:IsHasType(EFFECT_TYPE_ACTIVATE) and rp~=tp and Duel.IsChainNegatable(ev) 
+  and Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsEvenScale),e:GetHandlerPlayer(),LOCATION_PZONE,0,1,nil)
 end
 function s.discost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsReleasable() end
