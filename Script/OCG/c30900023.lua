@@ -15,7 +15,7 @@ function s.initial_effect(c)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCode(EFFECT_UPDATE_ATTACK)
 	e1:SetValue(500)
-	e1:SetTarget(s.pntg)
+	e1:SetTarget(s.atktg)
 	c:RegisterEffect(e1)
 	local e2=e1:Clone()
 	e2:SetCode(EFFECT_UPDATE_DEFENSE)
@@ -86,8 +86,8 @@ end
 function s.fusfilter(c,code,fc,sumtype,tp)
 	return c:IsSummonCode(fc,sumtype,tp,code) and not c:IsHasEffect(511002961)
 end
-function s.pntg(e,c,tp,r,re)
-    	return c:IsSetCard({SET_ODD_EYES,SET_PERFORMAPAL})
+function s.atktg(e,c,tp,r,re)
+    	return c:IsSetCard({SET_ODD_EYES,SET_PERFORMAPAL}) and c:IsMonster()
 end
 function s.swichtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
   if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and (chkc:IsControler(tp) or chkc:IsControler(1-tp)) end
