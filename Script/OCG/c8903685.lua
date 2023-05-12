@@ -1,5 +1,4 @@
 --Blue-Eyes Battle Ox
---Scripted by Playmaker
 local s,id=GetID()
 function s.initial_effect(c)
 	--spsumon
