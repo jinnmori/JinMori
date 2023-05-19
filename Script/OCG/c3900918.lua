@@ -1,93 +1,61 @@
---Red Dragon Ascension
+--Blackwing -Pathogen the chilly wind
 local s,id=GetID()
 function s.initial_effect(c)
-	--Activate
-	local e1=Effect.CreateEffect(c)
-	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetRange(LOCATION_HAND)
-	e1:SetCountLimit(1,id)
-	e1:SetTarget(s.target)
-	e1:SetOperation(s.activate)
-	c:RegisterEffect(e1)
-	--Send "Resonator" monsters from deck to GY
-	local e2=Effect.CreateEffect(c)
-	e2:SetCategory(CATEGORY_TOGRAVE)
-	e2:SetType(EFFECT_TYPE_QUICK_O)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e2:SetCode(EVENT_FREE_CHAIN)
-	e2:SetRange(LOCATION_GRAVE)
-	e2:SetCountLimit(1,id+1)
-	e2:SetCost(aux.bfgcost)
-	e2:SetTarget(s.sdtg)
-	e2:SetOperation(s.sdop)
-	c:RegisterEffect(e2)
+    local e1=Effect.CreateEffect(c)
+    e1:SetDescription(aux.Stringid(id,0))
+    e1:SetCategory(CATEGORY_TOGRAVE+CATEGORY_SPECIAL_SUMMON)
+    e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+    e1:SetCountLimit(1,id)
+	 e1:SetCode(EVENT_ATTACK_ANNOUNCE)
+    e1:SetRange(LOCATION_HAND)
+    e1:SetCountLimit(1,id)
+    e1:SetCost(s.spcost)
+    e1:SetTarget(s.sptg)
+    e1:SetOperation(s.spop)
+    c:RegisterEffect(e1)
 end
-s.listed_series={SET_RED_DRAGON_ARCHFIEND,SET_RESONATOR}
-function s.filter(c)
-	return c:HasLevel()
+s.listed_series={SET_BLACKWING}
+s.listed_names={id}
+
+function s.cfilter(c,e,tp,lv)
+    return c:IsMonster() and c:IsSetCard(SET_BLACKWING) and not c:IsType(TYPE_TUNER) and c:IsAbleToGraveAsCost() and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_EXTRA,0,1,nil,e,tp,c:GetLevel()+lv)
 end
-function s.filter2(c,e,tp,level)
-	return c:IsSetCard(SET_RED_DRAGON_ARCHFIEND) and c:IsType(TYPE_SYNCHRO)
-		and c:IsLevel(level) and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_SYNCHRO,tp,false,false)
+function s.spfilter(c,e,tp,lv)
+    return c:IsSetCard(SET_BLACKWING) and c:IsType(TYPE_SYNCHRO) and c:IsLevel(lv) 
+        and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_SYNCHRO,tp,false,false)
+        and Duel.GetLocationCountFromEx(tp,tp,nil,c)>0
 end
-function s.rescon(sg,e,tp,mg)
-	local lvl = sg:GetSum(Card.GetLevel)
-	return Duel.GetLocationCountFromEx(tp,tp,sg,TYPE_SYNCHRO)>0
-		and Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_EXTRA,0,1,nil,e,tp,lvl)
+function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	local at=Duel.GetAttacker()
+    local c=e:GetHandler()
+    local clv=c:GetLevel()
+    if chk==0 then return c:IsAbleToGraveAsCost() and Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_DECK,0,1,nil,e,tp,clv) and at:IsControler(1-tp) 
+    	and at:IsRelateToBattle() end
+    Duel.SendtoGrave(c,REASON_COST)
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+    local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_DECK,0,1,99,nil,e,tp,clv)
+    Duel.SendtoGrave(g,REASON_COST)
+    e:SetLabel(c:GetLevel()+g:GetSum(Card.GetLevel))
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_DECK+LOCATION_EXTRA,0,nil)
-	if chk==0 then return #g>1 and aux.SelectUnselectGroup(g,e,tp,2,#g,s.rescon,0) end
-	local rg=aux.SelectUnselectGroup(g,e,tp,2,#g,s.rescon,1,tp,HINTMSG_TODECK)
-	Duel.SetTargetCard(rg)
-	Duel.SetOperationInfo(0,CATEGORY_TODECK,rg,#rg,0,0)
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then return true end
+    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
 end
-function s.activate(e,tp,eg,ep,ev,re,r,rp)
-	local tdg=Duel.GetTargetCards(e)
-	if #tdg==0 then return end
-	if Duel.SendtoGrave(tdg,REASON_EFFECT)>0 and Duel.GetLocationCountFromEx(tp,tp,nil,nil)>0 then
-		local og=Duel.GetOperatedGroup()
-		local lv=og:GetSum(Card.GetLevel)
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-		local tc=Duel.SelectMatchingCard(tp,s.filter2,tp,LOCATION_EXTRA,0,1,1,nil,e,tp,lv):GetFirst()
-		if tc then
-			Duel.SpecialSummon(tc,SUMMON_TYPE_SYNCHRO,tp,tp,false,false,POS_FACEUP)
-			tc:CompleteProcedure()
-		end
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+    local lv=e:GetLabel()
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+    local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_EXTRA,0,1,1,nil,e,tp,lv)
+    if #g>0 then
+        Duel.SpecialSummon(g,SUMMON_TYPE_SYNCHRO,tp,tp,false,false,POS_FACEUP)
+        Duel.ChangeAttackTarget(g:GetFirst())
+        --Cannot Attack
+        local e1=Effect.CreateEffect(e:GetHandler())
+			e1:SetType(EFFECT_TYPE_SINGLE)
+			e1:SetCode(EFFECT_CANNOT_DIRECT_ATTACK)
+			e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+			g:GetFirst():RegisterEffect(e1)
+		g:GetFirst():CompleteProcedure()
+			--Destroy it during end phase
+		aux.DelayedOperation(g:GetFirst(),PHASE_END,id,e,tp,function(ag) Duel.Destroy(ag,REASON_EFFECT) end,nil,0)
 	end
-end
-function s.sdfilter(c)
-	return c:IsSetCard(SET_RESONATOR) and c:IsMonster() and c:IsAbleToGrave()
-end
-function s.redfilter(c)
-  return c:IsSetCard(SET_RED_DRAGON_ARCHFIEND) and c:IsType(TYPE_SYNCHRO)
-  end
-function s.sdtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
- local ct=Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)
- if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and s.redfilter(chkc) end
-	if chk==0 then return Duel.IsExistingMatchingCard(s.sdfilter,tp,LOCATION_DECK,0,1,nil) and Duel.IsExistingMatchingCard(nil,tp,0,LOCATION_MZONE,1,nil)
-  and ct>0 and Duel.IsExistingTarget(s.redfilter,tp,LOCATION_MZONE,0,1,nil) end
-  local g=Duel.SelectTarget(tp,s.redfilter,tp,LOCATION_MZONE,0,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,nil,1,tp,LOCATION_DECK)
-end
-function s.sdop(e,tp,eg,ep,ev,re,r,rp)
-local c=e:GetHandler()
-   local tc=Duel.GetFirstTarget()
-	local ct=Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)
-	local g=Duel.GetMatchingGroup(s.sdfilter,tp,LOCATION_DECK,0,nil)
-	local ft=math.min(Duel.GetLocationCount(tp,LOCATION_MZONE),#g,ct)
-	if ft<=0 then return end
-	local sg=aux.SelectUnselectGroup(g,e,tp,1,ct,nil,1,tp,HINTMSG_TOGRAVE)
-	Duel.SendtoGrave(sg,REASON_EFFECT)
-	local cto=sg:FilterCount(Card.IsLocation,nil,LOCATION_GRAVE)
-	local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_EXTRA_ATTACK_MONSTER)
-		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-		e1:SetValue(cto)
-		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-	    tc:RegisterEffect(e1)
 end

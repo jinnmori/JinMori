@@ -86,7 +86,7 @@ function s.vampcon2(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.vamplter(c,e,tp,mc,pg)
 	return c:IsSetCard(SET_VAMPIRE) and c:IsType(TYPE_XYZ) and mc:IsCanBeXyzMaterial(c,tp) and (#pg<=0 or pg:IsContains(mc)) 
-		and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_XYZ,tp,false,true)
+		and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_XYZ,tp,false,false)
 	end
 function s.vamptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
@@ -111,7 +111,7 @@ function s.vampop(e,tp,eg,ep,ev,re,r,rp,chk)
 		end
 		sc:SetMaterial(Group.FromCards(c))
 		Duel.Overlay(sc,Group.FromCards(c))
-		Duel.SpecialSummon(sc,SUMMON_TYPE_XYZ,tp,tp,false,true,POS_FACEUP)
+		Duel.SpecialSummon(sc,SUMMON_TYPE_XYZ,tp,tp,false,false,POS_FACEUP)
 		sc:CompleteProcedure()
 	end
 end

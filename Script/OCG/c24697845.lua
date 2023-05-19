@@ -52,7 +52,7 @@ function s.mtop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
 	local tg=Duel.SelectMatchingCard(tp,s.mtfilter,tp,LOCATION_GRAVE,0,1,5,nil)
 	if tg==0 then return end
-	Duel.SendtoDeck(tg,nil,0,REASON_EFFECT)
+	Duel.SendtoDeck(tg,nil,2,REASON_EFFECT)
 	if tg:IsExists(Card.IsLocation,1,nil,LOCATION_DECK) then Duel.ShuffleDeck(tp) end
 	local c=e:GetHandler()
 	local ct=tg:FilterCount(Card.IsLocation,nil,LOCATION_DECK+LOCATION_EXTRA)
