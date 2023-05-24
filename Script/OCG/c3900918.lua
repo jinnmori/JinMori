@@ -17,34 +17,33 @@ end
 s.listed_series={SET_BLACKWING}
 s.listed_names={id}
 
-function s.cfilter(c,e,tp,lv)
-    return c:IsMonster() and c:IsSetCard(SET_BLACKWING) and not c:IsType(TYPE_TUNER) and c:IsAbleToGraveAsCost() and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_EXTRA,0,1,nil,e,tp,c:GetLevel()+lv)
+function s.cfilter(c)
+    return c:IsMonster() and c:IsSetCard(SET_BLACKWING) and not c:IsType(TYPE_TUNER) and c:IsAbleToGraveAsCost() 
 end
 function s.spfilter(c,e,tp,lv)
-    return c:IsSetCard(SET_BLACKWING) and c:IsType(TYPE_SYNCHRO) and c:IsLevel(lv) 
+    return c:IsType(TYPE_SYNCHRO) and c:IsSetCard(SET_BLACKWING) and c:IsLevel(lv) 
         and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_SYNCHRO,tp,false,false)
         and Duel.GetLocationCountFromEx(tp,tp,nil,c)>0
+end
+function s.spcheck(sg,e,tp)
+    return #sg>0 and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_EXTRA,0,1,nil,e,tp,sg:GetSum(Card.GetLevel)+e:GetHandler():GetLevel())
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local at=Duel.GetAttacker()
     local c=e:GetHandler()
-    local clv=c:GetLevel()
-    if chk==0 then return c:IsAbleToGraveAsCost() and Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_DECK,0,1,nil,e,tp,clv) and at:IsControler(1-tp) 
-    	and at:IsRelateToBattle() end
-    Duel.SendtoGrave(c,REASON_COST)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-    local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_DECK,0,1,99,nil,e,tp,clv)
-    Duel.SendtoGrave(g,REASON_COST)
-    e:SetLabel(c:GetLevel()+g:GetSum(Card.GetLevel))
+    local g=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_DECK,0,nil)
+    if chk==0 then return c:IsAbleToGraveAsCost() and aux.SelectUnselectGroup(g,e,tp,1,5,s.spcheck,0) and at:IsControler(1-tp) and at:IsRelateToBattle() end
+    local sg=aux.SelectUnselectGroup(g,e,tp,1,5,s.spcheck,1,tp,HINTMSG_TOGRAVE,s.spcheck)
+    e:SetLabel(sg:GetSum(Card.GetLevel)+c:GetLevel())
+    Duel.SendtoGrave(sg+c,REASON_COST)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
     Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
-    local lv=e:GetLabel()
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-    local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_EXTRA,0,1,1,nil,e,tp,lv)
+    local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_EXTRA,0,1,1,nil,e,tp,e:GetLabel())
     if #g>0 then
         Duel.SpecialSummon(g,SUMMON_TYPE_SYNCHRO,tp,tp,false,false,POS_FACEUP)
         Duel.ChangeAttackTarget(g:GetFirst())
@@ -54,7 +53,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 			e1:SetCode(EFFECT_CANNOT_DIRECT_ATTACK)
 			e1:SetReset(RESET_EVENT+RESETS_STANDARD)
 			g:GetFirst():RegisterEffect(e1)
-		g:GetFirst():CompleteProcedure()
+			g:GetFirst():CompleteProcedure()
 			--Destroy it during end phase
 		aux.DelayedOperation(g:GetFirst(),PHASE_END,id,e,tp,function(ag) Duel.Destroy(ag,REASON_EFFECT) end,nil,0)
 	end

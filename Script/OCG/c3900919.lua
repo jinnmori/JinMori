@@ -123,5 +123,5 @@ function s.rtcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.retop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.ReturnToField(c)
+	Duel.ReturnToField(c,POS_FACEUP,LOCATION_GRAVE)
 end

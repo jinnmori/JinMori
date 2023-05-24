@@ -32,7 +32,7 @@ function s.initial_effect(c)
 	e1:SetCost(s.drcost)
 	e1:SetTarget(s.drtg)
 	e1:SetOperation(s.drop)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
+	c:RegisterEffect(e1)
 	--Dark World Effect 
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,0))
@@ -80,7 +80,7 @@ function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.darconfilter(c,tp)
-	return c:IsSetCard(SET_DARK_WORLD) and c:IsType(TYPE_MONSTER) and c:IsHasEffect(id)
+	return c:IsSetCard(SET_DARK_WORLD) and c:IsType(TYPE_MONSTER) and c:IsHasEffect(id) and c:IsControler(tp)
 	end
     function s.darcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.darconfilter,1,nil,tp)
@@ -94,6 +94,7 @@ function s.dartg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 end
 function s.darop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
+	tc:RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD&~(RESET_LEAVE|RESET_TEMP_REMOVE),0,0)
 		local eff={tc:GetCardEffect(id)}
 		local te=nil
 		local acd={}

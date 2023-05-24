@@ -11,7 +11,7 @@ function s.initial_effect(c)
 	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
 	e0:SetValue(aux.synlimit)
 	c:RegisterEffect(e0)
-		--Unaffected by other card effects
+	--Unaffected by other card effects
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(3100)
 	e1:SetProperty(EFFECT_FLAG_CLIENT_HINT)
@@ -34,6 +34,7 @@ function s.initial_effect(c)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1,id)
+	e3:SetCost(s.gvcost)
 	e3:SetTarget(s.gvtg)
 	e3:SetOperation(s.gvop)
 	c:RegisterEffect(e3)
@@ -69,29 +70,32 @@ function s.atkval(e,c)
 	return Duel.GetMatchingGroupCount(s.atkfilter,c:GetControler(),LOCATION_GRAVE,0,nil)*100
 end
 function s.tgfilter(c)
-	return c:IsMonster() and c:IsSetCard(SET_INFERNITY) and c:IsAbleToGrave()
+	return c:IsSetCard(SET_INFERNITY) and c:IsMonster() and c:IsAbleToGraveAsCost()
+end
+function s.gvcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_DECK+LOCATION_HAND,0,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+	local g=Duel.SelectMatchingCard(tp,s.tgfilter,tp,LOCATION_DECK+LOCATION_HAND,0,1,1,nil)
+	Duel.SendtoGrave(g,REASON_COST)
+	e:SetLabel(g:GetFirst():GetOriginalCodeRule())
 end
 function s.gvtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_DECK+LOCATION_HAND,0,1,nil) end
+	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,nil,1,tp,LOCATION_DECK+LOCATION_HAND)
 end
 function s.gvop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-	local g=Duel.SelectMatchingCard(tp,s.tgfilter,tp,LOCATION_DECK+LOCATION_HAND,0,1,1,nil)
-	if #g>0 then
-		Duel.SendtoGrave(g,REASON_EFFECT)
-		local name=g:GetFirst():GetCode()
-		--Change the Name
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetCode(EFFECT_CHANGE_CODE)
-	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-	e1:SetValue(name)
-	c:RegisterEffect(e1)
-	c:CopyEffect(name,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,1)
-	end
+	if not c:IsRelateToEffect(e) then return end
+		--Change name
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_CHANGE_CODE)
+		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+		e1:SetValue(e:GetLabel())
+		c:RegisterEffect(e1)
+  --that monster effect become that effect
+		c:CopyEffect(e:GetLabel(),RESET_EVENT+RESETS_STANDARD,1)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
