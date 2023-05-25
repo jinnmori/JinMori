@@ -16,6 +16,7 @@ function s.initial_effect(c)
 	--Search 1 Level 5 or higher "Dark World" monster/Special Summon 1 Level 4 or lower "Dark World" monster if discarded by opponent
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
+	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH+CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_TO_GRAVE)
@@ -24,10 +25,10 @@ function s.initial_effect(c)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2,false,REGISTER_FLAG_DWORLD)
 end
-s.listed_series={0x6}
+s.listed_series={SET_DARK_WORLD}
 s.listed_names={id}
 function s.spcfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x6) and c:IsLevelBelow(7) and c:IsAbleToHandAsCost()
+	return c:IsFaceup() and c:IsSetCard(SET_DARK_WORLD) and c:IsLevelBelow(7) and c:IsAbleToHandAsCost()
 end
 function s.spcon(e,c)
 	if c==nil then return true end
@@ -65,10 +66,10 @@ function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	else
 		e:SetLabel(0)
 	end
-	return c:IsPreviousLocation(LOCATION_HAND) and (r&REASON_EFFECT+REASON_DISCARD)==REASON_EFFECT+REASON_DISCARD
+	return (c:IsPreviousLocation(LOCATION_HAND) and (r&REASON_EFFECT+REASON_DISCARD)==REASON_EFFECT+REASON_DISCARD) or e:GetHandler():GetFlagEffect(67985556)~=0
 end
 function s.thfilter(c)
-	return c:IsSetCard(0x6) and not c:IsCode(id) and c:IsLevelAbove(5) and c:IsAbleToHand()
+	return c:IsSetCard(SET_DARK_WORLD) and not c:IsCode(id) and c:IsLevelAbove(5) and c:IsAbleToHand()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
@@ -82,7 +83,7 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 end
 function s.spfilter(c,e,tp)
-	return c:IsSetCard(0x6) and c:IsLevelBelow(4) and 
+	return c:IsSetCard(SET_DARK_WORLD) and c:IsLevelBelow(4) and 
 		((Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and c:IsCanBeSpecialSummoned(e,0,tp,false,false))
 		or (Duel.GetLocationCount(1-tp,LOCATION_MZONE)>0 and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,1-tp)))
 end

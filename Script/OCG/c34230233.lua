@@ -16,8 +16,9 @@ function s.initial_effect(c)
 	--destroy
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
+	e2:SetCategory(CATEGORY_DESTROY+CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e2:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_TO_GRAVE)
 	e2:SetCondition(s.descon)
 	e2:SetTarget(s.destg)
@@ -59,27 +60,36 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	g:DeleteGroup()
 end
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
-	e:SetLabel(e:GetHandler():GetPreviousControler())
-	return e:GetHandler():IsPreviousLocation(LOCATION_HAND) and r&0x4040==0x4040
+	local c=e:GetHandler()
+	if rp==1-tp and c:IsPreviousControler(tp) then
+		e:SetLabel(1)
+	else
+		e:SetLabel(0)
+	end
+	return (c:IsPreviousLocation(LOCATION_HAND) and (r&REASON_EFFECT+REASON_DISCARD)==REASON_EFFECT+REASON_DISCARD) or e:GetHandler():GetFlagEffect(67985556)~=0
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsOnField() and chkc:IsControler(1-tp) end
-	if chk==0 then return true end
+	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil,e,tp) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
 	local g=Duel.SelectTarget(tp,aux.TRUE,tp,0,LOCATION_ONFIELD,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,#g,0,0)
-	if rp==tp then
-		e:SetCategory(CATEGORY_DESTROY)
-	else
+	local opp_chk=e:GetLabel()
+	if opp_chk==1 then
 		e:SetCategory(CATEGORY_DESTROY+CATEGORY_SPECIAL_SUMMON)
 		Duel.SetPossibleOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND)
+	else
+		e:SetCategory(CATEGORY_DESTROY)
 	end
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	local opp_chk=e:GetLabel()
 	local tc=Duel.GetFirstTarget()
-	if tc and tc:IsRelateToEffect(e) and Duel.Destroy(tc,REASON_EFFECT)~=0 and rp==1-tp and tp==e:GetLabel() then
+		Duel.Destroy(tc,REASON_EFFECT)
 		Duel.BreakEffect()
 		local hg=Duel.GetFieldGroup(tp,0,LOCATION_HAND)
+		local opp_chk=e:GetLabel()
+		if opp_chk==0 then return end
 		if #hg>0 then
 			local cg=hg:RandomSelect(tp,1)
 			local cc=cg:GetFirst()
@@ -88,6 +98,5 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 				and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
 				Duel.SpecialSummon(cc,0,tp,tp,false,false,POS_FACEUP)
 			else Duel.ShuffleHand(1-tp) end
+				end
 		end
-	end
-end

@@ -16,7 +16,7 @@ function s.initial_effect(c)
 	--Dark World Effect
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
-	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CARD_TARGET)
 	e2:SetCode(EVENT_TO_GRAVE)
@@ -55,12 +55,13 @@ function s.retcon(e,tp,eg,ep,ev,re,r,rp)
 	else
 		e:SetLabel(0)
 	end
-	return c:IsPreviousLocation(LOCATION_HAND) and r&(REASON_DISCARD+REASON_EFFECT)==REASON_DISCARD+REASON_EFFECT
+	return (c:IsPreviousLocation(LOCATION_HAND) and (r&REASON_EFFECT+REASON_DISCARD)==REASON_EFFECT+REASON_DISCARD) or c:GetFlagEffect(67985556)~=0
 end
 function s.rettg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsControler(tp) end
 	if chk==0 then return Duel.IsExistingTarget(nil,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil,e,tp) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
+	local g=Duel.SelectTarget(tp,nil,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil,e,tp)
 	local opp_chk=e:GetLabel()
 	if opp_chk==1 then
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,tp,0)
@@ -74,12 +75,12 @@ end
 function s.retop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectTarget(tp,nil,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil,e,tp)
-	if #g==0 or Duel.SendtoHand(g,nil,REASON_EFFECT)==0 then return end
+	Duel.SendtoHand(tc,nil,REASON_EFFECT)
 	local opp_chk=e:GetLabel()
-	if opp_chk==0 then return end
+	if opp_chk~=0 and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
 	local sg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_GRAVE,LOCATION_GRAVE,nil,e,tp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local sc=sg:Select(tp,1,1,nil):GetFirst()
 	Duel.SpecialSummon(sc,0,tp,tp,false,false,POS_FACEUP)
+	end
 end

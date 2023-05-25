@@ -80,8 +80,18 @@ function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.darconfilter(c,tp)
-	return c:IsSetCard(SET_DARK_WORLD) and c:IsType(TYPE_MONSTER) and c:IsHasEffect(id) and c:IsControler(tp)
+	if not (c:IsSetCard(SET_DARK_WORLD) and c:IsMonster()
+		and c:IsHasEffect(id) and c:IsControler(tp)) then
+		return false
 	end
+	local eff={c:GetCardEffect(id)}
+	for _,teh in ipairs(eff) do
+		local te=teh:GetLabelObject()
+		local tg=te:GetTarget()
+			if (not tg or tg(te,tp,Group.CreateGroup(),PLAYER_NONE,0,teh,REASON_EFFECT,PLAYER_NONE,0)) then return true end
+	end
+	return false
+end
     function s.darcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.darconfilter,1,nil,tp)
 end
@@ -119,6 +129,7 @@ function s.darop(e,tp,eg,ep,ev,re,r,rp)
 		te=teh:GetLabelObject()
 		local tg=te:GetTarget()
 		local op=te:GetOperation()
+		e:SetProperty(te:IsHasProperty(EFFECT_FLAG_CARD_TARGET) and EFFECT_FLAG_CARD_TARGET or 0)
 		if tg then tg(te,tp,Group.CreateGroup(),PLAYER_NONE,0,teh,REASON_EFFECT,PLAYER_NONE,1) end
 		Duel.BreakEffect()
 		tc:CreateEffectRelation(te)
