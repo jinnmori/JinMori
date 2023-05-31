@@ -28,6 +28,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_DARKLORD}
+s.listed_names={id}
 function s.cfilter(c)
 	return c:IsSetCard(SET_DARKLORD) and c:IsDiscardable()
 end

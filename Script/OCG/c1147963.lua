@@ -22,6 +22,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
  s.listed_names={CARD_BLUEEYES_W_DRAGON}
+ s.listed_names={id}
 	function s.thfilter(c)
 	return c:ListsCode(CARD_BLUEEYES_W_DRAGON) and not c:IsCode(id) and c:IsAbleToHand()
 end

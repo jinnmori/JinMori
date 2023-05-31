@@ -25,6 +25,7 @@ function s.initial_effect(c)
 	end
 s.roll_dice=true
 s.listed_series={SET_PERFORMAPAL,SET_PERFORMAGE}
+s.listed_names={id}
 function s.lvfilter(c)
 	return c:IsFaceup() and c:HasLevel()
 end

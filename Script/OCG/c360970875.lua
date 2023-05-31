@@ -33,6 +33,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 end
 s.listed_series={SET_GAGAGA}
+s.listed_names={id}
   function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(SET_GAGAGA) and c:IsType(TYPE_MONSTER) and c:HasLevel()
 end

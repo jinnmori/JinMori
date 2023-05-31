@@ -26,8 +26,8 @@ function s.initial_effect(c)
 	e2:SetOperation(s.thop)
 	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
 end
-	s.listed_series={SET_PHOTON,SET_GALAXY}
-	
+s.listed_series={SET_PHOTON,SET_GALAXY}
+s.listed_names={id}	
 function s.lvtg(e,c)
 local tp=e:GetHandlerPlayer()
 	return c:HasLevel() and c:GetOwner()==tp

@@ -37,6 +37,7 @@ function s.initial_effect(c)
 	aux.DoubleSnareValidity(c,LOCATION_MZONE)
 end
 	s.listed_series={SET_ZW,SET_NUMBER,SET_NUMBER_S}
+	s.listed_names={id}
 	s.xyz_number=39
 function s.xyzfilter(c,xyz,sumtype,tp)
     return c:IsSummonCode(xyz,SUMMON_TYPE_XYZ,tp,56840427)

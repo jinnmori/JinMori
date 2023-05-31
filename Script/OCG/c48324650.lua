@@ -29,7 +29,7 @@ function s.initial_effect(c)
 	aux.AddEREquipLimit(c,nil,s.eqval,Card.EquipByEffectAndLimitRegister,e3)
 end
 s.listed_series={SET_CYBERDARK}
-
+s.listed_names={id}
 function s.filter(c)
 	return c:IsLevel(3) and c:IsRace(RACE_DRAGON) and c:GetDefense()==800 and c:IsAbleToHand() 
 end

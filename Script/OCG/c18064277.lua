@@ -30,7 +30,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 end
  s.listed_series={SET_BLUE_EYES}
-
+s.listed_names={id}
 function s.spfilter(c)
 	return c:IsFaceup() and c:IsLevel(1) and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsType(TYPE_TUNER)
 	end

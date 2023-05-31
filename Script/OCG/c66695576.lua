@@ -30,7 +30,9 @@ function s.initial_effect(c)
 	e2:SetOperation(s.discop)
 	c:RegisterEffect(e2)
 end
+s.listed_series={SET_DARK_WORLD}
 s.material_setcode={SET_DARK_WORLD}
+s.listed_names={id}
 	function s.matfilter(c)
 	local lv=c:GetLevel()
 	return c:HasLevel() and (lv==5 or lv==6) and c:IsSetCard(SET_DARK_WORLD)

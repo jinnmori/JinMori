@@ -43,7 +43,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
 end
 s.listed_names={CARD_BLUEEYES_W_DRAGON}
-
+s.listed_names={id}
 function s.lcheck(sg,lc,sumtype,tp)
 	return sg:IsExists(Card.IsCode,tp,lc,sumtype,tp,CARD_BLUEEYES_W_DRAGON,1)
 end

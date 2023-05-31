@@ -36,14 +36,14 @@ function s.initial_effect(c)
 	e3:SetTarget(s.thtg)
 	e3:SetOperation(s.thop)
 	c:RegisterEffect(e3)
-	end
-	s.listed_series={SET_SUPREME_KING}
-	s.listed_names={CARD_SUPREME_ZARC}
+end
+s.listed_series={SET_SUPREME_KING}
+s.listed_names={CARD_SUPREME_ZARC,id}
 	
-	function s.costfilter(c)
+function s.costfilter(c)
 	return c:IsSetCard(SET_SUPREME_KING) and c:IsType(TYPE_MONSTER) and c:IsAbleToGraveAsCost()
 	end
-	function s.cfilter(c)
+function s.cfilter(c)
 	return c:IsFaceup() and c:IsCode(CARD_SUPREME_ZARC)
 end
 function s.condition(e,tp,eg,ep,ev,re,r,rp)

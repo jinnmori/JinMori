@@ -33,7 +33,8 @@ function s.initial_effect(c)
 	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
 end
-s.listed_series={0x7}
+s.listed_series={SET_ANCIENT_GEAR}
+s.listed_names={id}
 function s.matfilter(c,lc,sumtype,tp)
 	return c:IsRace(RACE_MACHINE,scard,sumtype,tp) and not c:IsType(TYPE_LINK,lc,sumtype,tp)
 end
@@ -41,7 +42,7 @@ function s.econ(e)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)
 end
 function s.efilter(e,c)
-	return c:IsSetCard(0x7)
+	return c:IsSetCard(SET_ANCIENT_GEAR)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -49,7 +50,7 @@ function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 		and c:IsPreviousPosition(POS_FACEUP)
 end
 function s.spfilter(c,e,tp)
-	return c:IsSetCard(0x7) and c:IsType(TYPE_MONSTER) and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
+	return c:IsSetCard(SET_ANCIENT_GEAR) and c:IsType(TYPE_MONSTER) and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -70,7 +71,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
   e1:SetType(EFFECT_TYPE_FIELD)
    e1:SetCode(EFFECT_DECREASE_TRIBUTE)
 	e1:SetTargetRange(LOCATION_HAND,0)
-	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x7))
+	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,SET_ANCIENT_GEAR))
 	e1:SetReset(RESET_PHASE+PHASE_END)
 	e1:SetValue(0x1)
    Duel.RegisterEffect(e1,tp)

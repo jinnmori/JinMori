@@ -33,7 +33,7 @@ function s.initial_effect(c)
 end
 s.material_setcode={SET_CYBERDARK}
 s.listed_series={SET_CYBERDARK}
-
+s.listed_names={id}
 function s.gycon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_FUSION)
 end

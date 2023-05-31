@@ -28,6 +28,8 @@ function s.initial_effect(c)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
 end
+s.listed_names={id,58069384,CARD_CYBER_DRAGON}
+s.listed_series={SET_CYBER_DRAGON,SET_CYBER}
 function s.filter(c,e,tp)
 	return ((c:IsSetCard(SET_CYBER_DRAGON) and c:IsMonster()) or (c:IsSetCard(SET_CYBER) and c:IsSpellTrap())) and c:IsAbleToHand()
 end

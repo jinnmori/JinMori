@@ -39,7 +39,7 @@ function s.initial_effect(c)
 	e3:SetValue(500)
 	c:RegisterEffect(e3)
 	end
-	s.listed_names={40669071}
+s.listed_names={40669071,id}
 function s.condition(e)
 	local c=e:GetHandler()
 	return c:GetSequence()>4

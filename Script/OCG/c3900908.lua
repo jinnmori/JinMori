@@ -17,7 +17,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
 end
 s.listed_series={SET_THE_PHANTOM_KNIGHTS,SET_RAIDRAPTOR,SET_XYZ_DRAGON}
-
+s.listed_names={id}
 function s.spfilter(c,e,tp,mc,pg)
 	return c:IsType(TYPE_XYZ) and (c:IsSetCard(SET_THE_PHANTOM_KNIGHTS) or c:IsSetCard(SET_RAIDRAPTOR) or c:IsSetCard(SET_XYZ_DRAGON))
 		and Duel.GetLocationCountFromEx(tp,tp,mc,c)>0

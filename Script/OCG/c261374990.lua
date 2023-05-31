@@ -38,7 +38,7 @@ function s.initial_effect(c)
 	e4:SetCondition(s.spcon2)
 	c:RegisterEffect(e4)
 end
-s.listed_names={CARD_SEPHYLON}
+s.listed_names={CARD_SEPHYLON,id}
 s.listed_series={SET_TIMELORD}
 	function s.sprcon(e,c)
 	if c==nil then return true end

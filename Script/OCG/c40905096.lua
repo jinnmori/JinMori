@@ -37,6 +37,7 @@ c:SetSPSummonOnce(id)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_DARKLORD}
+s.listed_names={id}
 function s.spfilter(c)
 return c:IsRace(RACE_FAIRY) and c:IsAttribute(ATTRIBUTE_DARK)
 end

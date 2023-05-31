@@ -38,8 +38,9 @@ function s.initial_effect(c)
 	e3:SetTarget(s.attg)
 	e3:SetOperation(s.atop)
 	c:RegisterEffect(e3)
-	end
-	s.listed_series={SET_VAMPIRE}
+end
+s.listed_series={SET_VAMPIRE}
+s.listed_names={id}
 	function s.filter(c)
 	return c:IsSetCard(SET_VAMPIRE) and c:IsMonster()
 	end

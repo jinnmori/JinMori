@@ -51,7 +51,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 	end
 s.listed_series={SET_CHAOS,SET_SILENT_SWORDSMAN}
-s.listed_names={CARD_S_MAGICIAN,CARD_CFORM}
+s.listed_names={CARD_S_MAGICIAN,CARD_CFORM,id}
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return ep~=tp and Duel.GetCurrentPhase()~=PHASE_DRAW
 end

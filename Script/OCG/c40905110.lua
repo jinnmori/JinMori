@@ -31,8 +31,9 @@ function s.initial_effect(c)
 	e2:SetTarget(s.cptg)
 	e2:SetOperation(s.cpop)
 	c:RegisterEffect(e2)
-	end
-	s.material_setcode={SET_DARKLORD}
+end
+s.listed_series={SET_DARKLORD}
+s.listed_names={id}
 	function s.discon(e,tp,eg,ep,ev,re,r,rp)
 	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and re:IsActiveType(TYPE_MONSTER) and ep==1-tp and Duel.IsChainNegatable(ev)
 end

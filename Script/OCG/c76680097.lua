@@ -25,6 +25,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_RED_DRAGON_ARCHFIEND,SET_RESONATOR}
+s.listed_names={id}
 function s.filter(c)
 	return (c:IsSetCard(SET_RED_DRAGON_ARCHFIEND) or c:IsType(TYPE_TUNER)) and c:IsFaceup() and c:HasLevel() and c:IsAbleToDeck()
 end

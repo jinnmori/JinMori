@@ -26,7 +26,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_WARRIOR,SET_SYNCHRON,SET_STARDUST,SET_JUNK}
-
+s.listed_names={id}
 function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
 local c=e:GetHandler()
 	if chk==0 then return e:GetHandler():IsDiscardable() end

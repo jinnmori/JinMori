@@ -25,7 +25,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_BLUE_EYES} 
-s.listed_names={CARD_BLUEEYES_W_DRAGON}
+s.listed_names={CARD_BLUEEYES_W_DRAGON,id}
 
  function s.filter(c,e,tp)
 	return c:IsLevel(1) and c:IsType(TYPE_TUNER) and c:IsAttribute(ATTRIBUTE_LIGHT) and Duel.IsExistingMatchingCard(s.fusfilter,tp,LOCATION_EXTRA,0,1,nil,e,tp,c)

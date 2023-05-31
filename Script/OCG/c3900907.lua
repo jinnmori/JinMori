@@ -27,7 +27,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_PHANTOM_KNIGHTS}
-
+s.listed_names={id}
 function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(SET_PHANTOM_KNIGHTS) and c:IsMonster()
 end

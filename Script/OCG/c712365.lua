@@ -36,7 +36,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 end
 s.listed_series={SET_BLUE_EYES}
-s.listed_names={CARD_BLUEEYES_W_DRAGON,23995346}
+s.listed_names={CARD_BLUEEYES_W_DRAGON,23995346,id}
 
 function s.matfilter(c,lc,sumtype,tp)
 	return c:IsType(TYPE_TUNER,lc,sumtype,tp) and c:IsRace(RACE_SPELLCASTER,lc,sumtype,tp) and c:IsAttribute(ATTRIBUTE_LIGHT,lc,sumtype,tp)

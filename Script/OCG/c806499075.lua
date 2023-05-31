@@ -32,8 +32,8 @@ function s.initial_effect(c)
 		e4:SetLabelObject(returneff)
 	end
 end
-s.listed_names={CARD_NEOS}
-s.listed_series={SET_NEO_SPACIAN}
+s.listed_names={CARD_NEOS,id}
+s.listed_series={SET_NEO_SPACIAN}	
 function s.filter2(c,e,tp)
 	return c:IsSetCard(SET_NEO_SPACIAN) and c:IsAbleToGrave() and c:IsCanBeFusionMaterial()
 end

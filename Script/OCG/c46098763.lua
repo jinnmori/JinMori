@@ -35,6 +35,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2,false,REGISTER_FLAG_DETACH_XMAT)
 end
  s.listed_series={SET_GALAXY,SET_PHOTON}
+ s.listed_names={id}
 
  function s.xmatfilter(c)
    return (c:IsSetCard(SET_GALAXY) or c:IsSetCard(SET_PHOTON)) and c:IsMonster()

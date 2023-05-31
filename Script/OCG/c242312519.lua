@@ -35,6 +35,7 @@ local e2=Effect.CreateEffect(c)
 	e3:SetOperation(s.spop1)
 	c:RegisterEffect(e3,false,REGISTER_FLAG_DETACH_XMAT)
 end
+s.listed_names={id}
 	function s.tgcon(e)
 	return e:GetHandler():GetOverlayCount()>0
 end

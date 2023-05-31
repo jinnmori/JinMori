@@ -16,7 +16,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 end
 s.listed_series={SET_GALAXY,SET_PHOTON,SET_BOUNZER}
-  
+ s.listed_names={id}
 function s.filter(c,e,tp)
 	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsPreviousControler(tp)
 	and c:GetControler()==tp and c:IsReason(REASON_DESTROY) and ((c:IsSetCard(SET_PHOTON) or c:IsSetCard(SET_GALAXY) or c:IsSetCard(SET_BOUNZER)) 

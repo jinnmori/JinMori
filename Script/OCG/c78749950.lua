@@ -34,9 +34,9 @@ function s.initial_effect(c)
 	e4:SetTarget(s.thtg)
 	e4:SetOperation(s.thop)
 	c:RegisterEffect(e4,false,REGISTER_FLAG_DETACH_XMAT)
-	end
-	s.listed_series={SET_DARK_CONTRACT}
-	
+end
+s.listed_series={SET_DARK_CONTRACT}
+s.listed_names={id}	
 	function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
 	return ep==tp and r&REASON_BATTLE==0 and re
 		and re:IsActiveType(TYPE_MONSTER+TYPE_SPELL+TYPE_TRAP)

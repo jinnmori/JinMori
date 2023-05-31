@@ -46,8 +46,9 @@ function s.initial_effect(c)
 	e4:SetTarget(s.thtg)
 	e4:SetOperation(s.thop)
 	c:RegisterEffect(e4)
-	end
-	s.listed_series={SET_DD,SET_DDD}
+end
+s.listed_series={SET_DD,SET_DDD}
+s.listed_names={id}
 	function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
 	  local c=e:GetHandler()
 	  local tp=c:GetControler()

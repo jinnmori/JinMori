@@ -28,7 +28,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 	end
 s.listed_series={SET_ANCIENT_GEAR}
-s.listed_names={CARD_ANCIENT_GOLEM,CARD_ANCIENT_POUND}
+s.listed_names={CARD_ANCIENT_GOLEM,CARD_ANCIENT_POUND,id}
 
 function s.atkcost1(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsDiscardable() end

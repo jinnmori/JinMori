@@ -43,7 +43,8 @@ c:EnableReviveLimit()
 		Duel.RegisterEffect(ge1,0)
 	end)
 end
-	s.listed_series={SET_DARKLORD}
+s.listed_series={SET_DARKLORD}
+s.listed_names={id}
 	function s.thcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return c:IsSummonType(SUMMON_TYPE_LINK)

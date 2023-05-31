@@ -45,7 +45,7 @@ function s.initial_effect(c)
 end
 s.listed_series={SET_CYBER}
 s.listed_names={CARD_CYBER_DRAGON}
-  
+s.listed_names={id}
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsRace,tp,LOCATION_HAND,0,1,e:GetHandler(),RACE_MACHINE) end
 	Duel.DiscardHand(tp,Card.IsRace,1,1,REASON_COST+REASON_DISCARD,e:GetHandler(),RACE_MACHINE)

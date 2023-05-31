@@ -24,6 +24,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_INFERNITY}
+s.listed_names={id}
 function s.costfilter(c,e,tp)
 	return c:IsDiscardable() and c:IsMonster() and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,1,c,e,tp)
 end

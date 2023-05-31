@@ -41,10 +41,10 @@ function s.initial_effect(c)
 	e4:SetTarget(s.distg)
 	e4:SetOperation(s.disop)
 	c:RegisterEffect(e4)
-	end
-	s.listed_series={SET_SOLFACHORD}
-	
-	function s.filter(c)
+end
+s.listed_series={SET_SOLFACHORD}
+s.listed_names={id}
+function s.filter(c)
 	return c:IsSetCard(SET_SOLFACHORD) and c:IsType(TYPE_PENDULUM) and c:IsAbleToHand()
 end
 function s.thcon(e,tp,eg,ep,ev,re,r,rp)

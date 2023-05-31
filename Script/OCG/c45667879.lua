@@ -29,8 +29,9 @@ function s.initial_effect(c)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetValue(s.ntval)
 	c:RegisterEffect(e3)
-	end
-	function s.cfilter(c)
+end
+s.listed_names={id}
+function s.cfilter(c)
 	return c:IsFacedown() or not (c:IsRace(RACE_DRAGON) or c:IsRace(RACE_FIEND) or c:IsRace(RACE_WARRIOR))
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)

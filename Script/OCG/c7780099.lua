@@ -24,6 +24,7 @@ function s.initial_effect(c)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
 end
+s.listed_names={id}
 function s.chainop(e,tp,eg,ep,ev,re,r,rp)
 	local rc=re:GetHandler()
 	if rp==tp and rc:GetRace()==RACE_ZOMBIE and re:IsActiveType(TYPE_MONSTER) then

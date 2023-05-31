@@ -26,7 +26,8 @@ function s.initial_effect(c)
 	e4:SetTarget(s.rctg)
 	e4:SetOperation(s.rcop)
 	c:RegisterEffect(e4)
-	end
+end
+s.listed_names={id}
 	function s.matfilter(c,lc,sumtype,tp)
 	return c:IsRace(RACE_ZOMBIE,lc,sumtype,tp) and c:IsLevelAbove(5)
 end

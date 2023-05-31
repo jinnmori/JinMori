@@ -25,6 +25,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_GALAXY,SET_PHOTON}
+s.listed_names={id}
   function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(SET_GALAXY) and c:IsType(TYPE_MONSTER) and c:HasLevel()
 end
