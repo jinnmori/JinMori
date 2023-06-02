@@ -15,7 +15,7 @@ function s.initial_effect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e2:SetProperty(EFFECT_FLAG_DELAY)
+	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
 	e2:SetCode(EVENT_SUMMON_SUCCESS)
 	e2:SetCountLimit(1,id)
 	e2:SetTarget(s.thtg)
@@ -36,6 +36,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
 	end
 s.listed_series={SET_ANCIENT_GEAR}
+s.listed_names={id}
 function s.cfilter(c)
 	return c:IsFaceup() and c:IsRace(RACE_MACHINE)
 end

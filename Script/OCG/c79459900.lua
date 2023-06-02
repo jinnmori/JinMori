@@ -7,7 +7,7 @@ function s.initial_effect(c)
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_REMOVE)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
 	e1:SetCountLimit(1,id)
 	e1:SetTarget(s.sumtg)
 	e1:SetOperation(s.sumop)
@@ -15,8 +15,9 @@ function s.initial_effect(c)
 	local e2=e1:Clone()
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e2)
-	end
-	s.listed_series={SET_VAMPIRE}
+end
+s.listed_series={SET_VAMPIRE}
+s.listed_names={id}
 	function s.filter(c,e,tp)
 	return c:IsSetCard(SET_VAMPIRE) and c:IsMonster() and c:IsCanBeEffectTarget()
 end

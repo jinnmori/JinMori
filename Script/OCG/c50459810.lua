@@ -33,7 +33,7 @@ function s.initial_effect(c)
 	local e5=Effect.CreateEffect(c)
 	e5:SetDescription(aux.Stringid(id,0))
 	e5:SetCategory(CATEGORY_DESTROY)
-	e5:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CARD_TARGET)
+	e5:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL+EFFECT_FLAG_CARD_TARGET)
 	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e5:SetCountLimit(1,id)
 	e5:SetCode(EVENT_SPSUMMON_SUCCESS)
@@ -61,7 +61,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e6)
 end
 s.listed_series={SET_PERFORMAPAL}
-
+s.listed_names={id}
 function s.synlimit(e,c)
 	if not c then return false end
 	return not c:IsType(TYPE_PENDULUM)

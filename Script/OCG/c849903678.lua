@@ -14,7 +14,7 @@ function s.initial_effect(c)
 	--Return them 
 	local e5=Effect.CreateEffect(c)
 	e5:SetCategory(CATEGORY_TOHAND)
-	e5:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e5:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
 	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e5:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e5:SetCondition(s.retcon)

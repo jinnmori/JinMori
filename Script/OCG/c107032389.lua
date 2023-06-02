@@ -9,7 +9,7 @@ function s.initial_effect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e2:SetProperty(EFFECT_FLAG_DELAY)
+	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
 	e2:SetCountLimit(1,id)
 	e2:SetCondition(s.discon)
 	e2:SetTarget(s.distg)
@@ -53,14 +53,14 @@ function s.initial_effect(c)
 	e5:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
 	e5:SetValue(s.indct)
 	c:RegisterEffect(e5)
-	end
-	s.listed_series={SET_PERFORMAPAL,SET_MAGICIAN,SET_ODD_EYES}
-	s.listed_names={id}
+end
+s.listed_series={SET_PERFORMAPAL,SET_MAGICIAN,SET_ODD_EYES}
+s.listed_names={id}
 	
-	function s.discon(e,tp,eg,ep,ev,re,r,rp)
+function s.discon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_PENDULUM)
-	end
-	function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
+end
+function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_PZONE,0)>0 and Duel.IsExistingMatchingCard(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_DISABLE,nil,1,tp,LOCATION_ONFIELD)
 end

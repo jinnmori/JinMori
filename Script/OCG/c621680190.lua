@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetCode(EVENT_SUMMON_SUCCESS)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
+	e2:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
 	e2:SetCountLimit(1,id)
 	e2:SetTarget(s.sumtg)
 	e2:SetOperation(s.sumop)
@@ -24,11 +24,11 @@ function s.initial_effect(c)
 	local e4=e2:Clone()
 	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e4)
-	end
-	s.listed_series={SET_JUNK,SET_SYNCHRON}
-	s.listed_names={CARD_STARDUST_DRAGON}
+end
+s.listed_series={SET_JUNK,SET_SYNCHRON}
+s.listed_names={CARD_STARDUST_DRAGON,id}
 	
-	function s.filter(c,e,tp)
+function s.filter(c,e,tp)
 	return c:IsSetCard(SET_JUNK) or c:IsCode(CARD_STARDUST_DRAGON) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_DEFENSE)
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
