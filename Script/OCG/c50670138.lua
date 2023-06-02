@@ -20,7 +20,7 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CARD_TARGET)
 	e2:SetCountLimit(1,id+1)
-	e2:SetCode(EVENT_DESTROYED)
+	e2:SetCode(EVENT_TO_GRAVE)
 	e2:SetCondition(s.spcon)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
@@ -66,7 +66,8 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	return r&(REASON_EFFECT+REASON_BATTLE)~=0
+	local c=e:GetHandler()
+	return c:IsReason(REASON_DESTROY) and c:IsReason(REASON_BATTLE+REASON_EFFECT)
 end
 function s.spfilter(c,e,tp)
 	return c:IsLinkMonster() and c:IsRace(RACE_CYBERSE) and c:GetLink()==4 and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
