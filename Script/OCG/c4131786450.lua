@@ -1,4 +1,4 @@
---Magician of Silent Chaos
+--Silent of Chaos
 Duel.LoadScript("SP_CARDS.lua")
 local s,id=GetID()
 function s.initial_effect(c)
@@ -16,6 +16,7 @@ function s.initial_effect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_DRAW)
 	e1:SetType(EFFECT_TYPE_QUICK_O)
+	e1:SetProperty(EFFECT_FLAG_DELAY)
 	e1:SetCountLimit(1,id)
 	e1:SetCode(EVENT_DRAW)
 	e1:SetRange(LOCATION_MZONE)
@@ -73,8 +74,7 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.discon(e,tp,eg,ep,ev,re,r,rp)
-  return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and 
-            re:IsActiveType(TYPE_SPELL)  and Duel.IsChainNegatable(ev)
+	return re:IsActiveType(TYPE_SPELL+TYPE_TRAP) and Duel.IsChainNegatable(ev)
 end
 function s.discost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,nil) end
@@ -87,7 +87,7 @@ function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
 	end
 function s.filter2(c)
-	return c:IsType(TYPE_SPELL) and (c:IsLocation(LOCATION_GRAVE) or c:IsFaceup())
+	return c:IsSpellTrap() and (c:IsLocation(LOCATION_GRAVE) or c:IsFaceup())
 	end
 function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -102,8 +102,8 @@ function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	return c:IsSummonType(SUMMON_TYPE_RITUAL) and c:IsReason(REASON_BATTLE+REASON_EFFECT)
 end
 function s.spfilter(c,e,tp)
-	return c:IsSetCard(SET_CHAOS) and c:IsRitualMonster() and not c:IsCode(id) and c:IsCanBeSpecialSummoned(e,0,tp,true,false) or
-         c:IsSetCard(SET_SILENT_SWORDSMAN) and c:IsType(TYPE_MONSTER) and not c:IsCode(id) and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
+	return c:IsSetCard(SET_CHAOS) and c:IsRitualMonster() or c:IsSetCard(SET_SILENT_SWORDSMAN) and c:IsType(TYPE_MONSTER)
+	 and c:IsCanBeSpecialSummoned(e,0,tp,true,true) and not c:IsCode(id)
 	end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -115,6 +115,6 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local g=Duel.SelectMatchingCard(tp,aux.NecroValleyFilter(s.spfilter),tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
 	if #g>0 then
-		Duel.SpecialSummon(g,0,tp,tp,true,false,POS_FACEUP)
+		Duel.SpecialSummon(g,0,tp,tp,true,true,POS_FACEUP)
 	end
 end
