@@ -1,0 +1,26 @@
+
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_SINGLE)
+    e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+    e1:SetCode(id)
+    e1:SetRange(LOCATION_EXTRA)
+    c:RegisterEffect(e1)
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_SINGLE)
+    e2:SetCode(EFFECT_SYNCHRO_LEVEL)
+    e2:SetValue(function(e,c)
+        local lv=e:GetHandler():GetLevel()
+        return c:IsHasEffect(id) and ((1<<16)|lv) or lv
+    end)
+    local e3=Effect.CreateEffect(c)
+    e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_GRANT)
+    e3:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+    e3:SetRange(LOCATION_EXTRA)
+    e3:SetTargetRange(LOCATION_MZONE,0)
+    e3:SetTarget(s.syntg)
+    e3:SetLabelObject(e2)
+    c:RegisterEffect(e3)
+end
+function s.syntg(e,c)
+	return c:IsType(TYPE_SYNCHRO) and not c:IsType(TYPE_TUNER)
+end

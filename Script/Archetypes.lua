@@ -5,3 +5,4 @@ SET_SUPREME_KING          = 0xf8
 SET_EYES_OF_BLUE          = 0xd1d
 SET_CYBER_END_DRAGON      = 0x3093
 SET_HYSTERIC              = 0x59c
+SET_NUMBER_S              = 0x7048

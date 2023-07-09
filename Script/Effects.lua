@@ -33,6 +33,45 @@ if card then
 		end
 	end
 end
+function Auxiliary.ToHandOrSet(card,player,check,oper,str,...)
+	if card then
+		if not check then check=Card.IsSSetable end
+		if not oper then oper=aux.thoeSet end
+		if not str then str=510 end
+		local b1,b2=true,true
+		if type(card)=="Group" then
+			for ctg in aux.Next(card) do
+				if not ctg:IsAbleToHand() then
+					b1=false
+				end
+				if not check(ctg,...) then
+					b2=false
+				end
+			end
+		else
+			b1=card:IsAbleToHand()
+			b2=check(card,...)
+		end
+		local opt
+		if b1 and b2 then
+			opt=Duel.SelectOption(player,573,str)
+		elseif b1 then
+			opt=Duel.SelectOption(player,573)
+		else
+			opt=Duel.SelectOption(player,510)
+		end
+		if opt==0 then
+			local res=Duel.SendtoHand(card,nil,REASON_EFFECT)
+			if res~=0 then Duel.ConfirmCards(1-player,card) end
+			return res
+		else
+			return oper(card,...)
+		end
+	end
+end
+function Auxiliary.thoeSet(card)
+	return Duel.SSet(card:GetControler(),card,card:GetControler(),false)
+end
 
 
 Duel.LoadScript("cards_specific_functions.lua")

@@ -36,4 +36,10 @@ if not CustomArchetype then
 		16616620,16616620,10493654,10925955,14517422,16169772,35255456,41933425,41933425,82639107,100000551,69270537,810000061,75047173
 	}
 	Card.IsContact=MakeCheck({0xfde},CustomArchetype.OCGContact)
+		-- "Shooting" Synchro monster 
+	CustomArchetype.OCGShooting={
+		35952884,40939228,24696097,24697845,63180841,68431965
+	}
+	Card.IsShooting=MakeCheck({0xfee5},CustomArchetype.OCGShooting)
 end
+
