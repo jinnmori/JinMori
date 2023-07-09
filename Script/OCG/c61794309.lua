@@ -51,7 +51,6 @@ s.listed_series={SET_ODD_EYES}
 function s.ovfilter(c)
 	return c:IsFaceup() and c:IsSetCard(SET_ODD_EYES) and c:IsType(TYPE_XYZ)
 end
-
 function s.spfilter(c,e,tp,mc,pg)
 	return c:IsFacedown() and (c:IsSetCard(SET_ODD_EYES)) and c:IsType(TYPE_XYZ)
 		and Duel.GetLocationCountFromEx(tp,tp,mc,c)>0
@@ -59,7 +58,6 @@ function s.spfilter(c,e,tp,mc,pg)
 		and mc:IsCanBeXyzMaterial(c,tp) and not c:IsCode(id)
 		and (not pg or #pg<=0 or pg:IsContains(mc))
    end
-   
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

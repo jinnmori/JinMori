@@ -76,40 +76,47 @@ end
 	return c:IsSetCard(SET_HARPIE) and c:IsMonster() and c:IsAbleToHand()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chk==0 then return true end
-		local b1=Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_DECK,0,1,nil)
-		local b2=Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,2,nil,e,tp) and Duel.GetLocationCount(tp,LOCATION_MZONE)>1
-		local op=Duel.SelectEffect(tp,
-		{b1,aux.Stringid(id,0)},
-		{b2,aux.Stringid(id,1)})
-	e:SetLabel(op)
-	e:SetCategory(0)
-	if op==1 then
-		e:SetCategory(CATEGORY_TOHAND)
-		local g=Duel.GetMatchingGroup(s.addfilter,tp,LOCATION_DECK,0,nil)
-		Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,tp,0)
-		elseif op==2 then
-		  e:SetCategory(CATEGORY_SPECIAL_SUMMON)
-		  local g1=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_DECK,0,nil,e,tp)
-			Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g1,1,tp,LOCATION_DECK)
-		 end
+		if chk==0 then
+		local sel=0
+		if Duel.IsExistingMatchingCard(s.addfilter,tp,LOCATION_DECK,0,1,nil) then sel=sel+1 end
+		if Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,2,nil,e,tp) and Duel.GetLocationCount(tp,LOCATION_MZONE)>1 then sel=sel+2 end
+		e:SetLabel(sel)
+		return sel~=0
+	end
+	local sel=e:GetLabel()
+		if sel==3 then
+		Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
+		sel=Duel.SelectOption(tp,aux.Stringid(id,0),aux.Stringid(id,1))+1
+	elseif sel==1 then
+		Duel.SelectOption(tp,aux.Stringid(id,0))
+	else
+		Duel.SelectOption(tp,aux.Stringid(id,1))
+	end
+	e:SetLabel(sel)
+	if sel==1 then
+	e:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+		Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+	else
+		e:SetCategory(CATEGORY_SPECIAL_SUMMON)
+		Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
+		end
 	end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 local c=e:GetHandler()
-	local op=e:GetLabel()
-	if op==1 then
+	local sel=e:GetLabel()
+	if sel==1 then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 	local g=Duel.SelectMatchingCard(tp,s.addfilter,tp,LOCATION_DECK,0,1,1,nil)
 	if #g>0 then
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
 	end
-	elseif op==2 then
+	elseif sel==2 then
 	  if Duel.GetLocationCount(tp,LOCATION_MZONE)<=1 then return end
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 		local g1=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_DECK,0,2,2,nil,e,tp)
 		if #g1>0 then
 		Duel.SpecialSummon(g1,0,tp,tp,false,false,POS_FACEUP)
-		      end
+		     end
 		   end
    end

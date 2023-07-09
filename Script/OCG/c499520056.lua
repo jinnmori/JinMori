@@ -28,26 +28,23 @@ end
 function s.splimit(e,se,sp,st)
 	return not e:GetHandler():IsLocation(LOCATION_EXTRA)
 end
-function s.filter2(c)
-	return c:IsType(TYPE_SPELL+TYPE_TRAP) and c:IsAbleToRemove()
-end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_MZONE,1,nil) or 
-	     Duel.IsExistingMatchingCard(s.filter2,tp,0,LOCATION_ONFIELD,1,nil) end
+	Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,nil) end
 	Duel.SetChainLimit(s.chainlm)
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,0,1,0,0)
 end
 function s.chainlm(e,rp,tp)
 	return tp==rp
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g1=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_MZONE,nil)
-	local g2=Duel.GetMatchingGroup(s.filter2,tp,0,LOCATION_ONFIELD,nil) 
+	local g2=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_SZONE,nil)
 	if g1>g2 then 
-	 Duel.Remove(g1,POS_FACEUP,REASON_EFFECT) else
-	if g2>g1 then 
+	 Duel.Remove(g1,POS_FACEUP,REASON_EFFECT) 
+	else
 	Duel.Remove(g2,POS_FACEUP,REASON_EFFECT)
-   	end
-  end
+	end
 end
 function s.retop(e,tp,eg,ep,ev,re,r,rp)
 	local e1=Effect.CreateEffect(e:GetHandler())

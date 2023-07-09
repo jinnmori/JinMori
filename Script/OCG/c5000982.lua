@@ -11,8 +11,8 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 	--Search 1 Level 6 or 7 Spellcaster 
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,2))
-	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e2:SetDescription(aux.Stringid(id,0))
+	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH+CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_QUICK_O)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetRange(LOCATION_HAND)
@@ -23,7 +23,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 	--Special summon itself from GY
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,0))
+	e3:SetDescription(aux.Stringid(id,1))
 	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e3:SetProperty(EFFECT_FLAG_DELAY)
@@ -41,19 +41,30 @@ function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToGraveAsCost() end
 	Duel.SendtoGrave(e:GetHandler(),REASON_COST)
 end
-function s.thfilter(c)
-	return c:IsMonster() and c:IsRace(RACE_SPELLCASTER) and (c:IsLevel(6) or c:IsLevel(7)) and c:IsAbleToHand()
+function s.mgfilter(c)
+	return c:IsFacedown() or c:IsFaceup() and c:IsRace(RACE_SPELLCASTER)
+end
+function s.thfilter(c,e,tp,mg,mz)
+	return c:IsMonster() and c:IsRace(RACE_SPELLCASTER) and (c:IsLevel(6) or c:IsLevel(7)) and 
+	(c:IsAbleToHand()or (mg and mz and c:IsCanBeSpecialSummoned(e,0,tp,false,false)))
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
+	local mg,mz=Duel.IsExistingMatchingCard(s.mgfilter,tp,LOCATION_MZONE,0,1,nil),Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil,e,tp,mg,mz) end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+	Duel.SetPossibleOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
+	local mg,mz=Duel.IsExistingMatchingCard(s.mgfilter,tp,LOCATION_MZONE,0,1,nil),Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,2))
+	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil,e,tp,mg,mz)
 	if #g>0 then
+		if mg and mz and Duel.SelectYesNo(tp,aux.Stringid(id,3)) then
+			Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+		else
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
+		end
 	end
 end
 function s.ssfilter(c,tp)

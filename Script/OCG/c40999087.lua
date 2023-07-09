@@ -25,12 +25,13 @@ function s.initial_effect(c)
 	--Switch the Atk/Def
 	local e3=Effect.CreateEffect(c)
 	e3:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DEFCHANGE)
-	e3:SetType(EFFECT_TYPE_QUICK_O)
 	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_QUICK_O)
 	e3:SetCode(EVENT_FREE_CHAIN)
+	e3:SetProperty(EFFECT_FLAG_DELAY)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1)
-	e3:SetCondition(s.swicon)
+	e3:SetCondition(s.switcon)
 	e3:SetOperation(s.switop)
 	c:RegisterEffect(e3)
 	--Add 1 "Odd-Eyes", "Performapal" or 1 "Magician" from your deck to your hand
@@ -39,9 +40,10 @@ function s.initial_effect(c)
 	e4:SetCategory(CATEGORY_SEARCH+CATEGORY_TOHAND)
 	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e4:SetCode(EVENT_BATTLE_DESTROYING)
-	e4:SetCondition(aux.bdgcon)
-	e4:SetTarget(s.target)
-	e4:SetOperation(s.operation)
+	e4:SetProperty(EFFECT_FLAG_DELAY)
+	e4:SetCondition(aux.bdocon)
+	e4:SetTarget(s.thtg)
+	e4:SetOperation(s.thop)
 	c:RegisterEffect(e4)
 	--actlimit
 	local e5=Effect.CreateEffect(c)
@@ -101,39 +103,38 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
-function s.swicon(e)
-	local ph=Duel.GetCurrentPhase()
-	return ph>=0x08 and ph<=0x80
+function s.switcon(e,tp,eg,ep,ev,re,r,rp)
+	return (Duel.GetCurrentPhase()>=PHASE_BATTLE_START and Duel.GetCurrentPhase()<=PHASE_BATTLE) and Duel.GetCurrentChain()==0
 end
 function s.switop(e,tp,eg,ep,ev,re,r,rp)
-  local c=e:GetHandler()
-    local atk=c:GetAttack()
-		local def=c:GetDefense()
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_SET_ATTACK_FINAL)
-		e1:SetValue(def)
-		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_BATTLE)
-		c:RegisterEffect(e1)
-		local e2=Effect.CreateEffect(c)
-		e2:SetType(EFFECT_TYPE_SINGLE)
-		e2:SetCode(EFFECT_SET_DEFENSE_FINAL)
-		e2:SetValue(atk)
-		e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_BATTLE)
-		c:RegisterEffect(e2)
+	local c=e:GetHandler()
+	local atk=c:GetAttack()
+	local def=c:GetDefense()
+	--This Cards Atk switched to its def
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_SET_ATTACK_FINAL)
+	e1:SetValue(def)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_BATTLE)
+	c:RegisterEffect(e1)
+	--This Cards def switched to its atk
+	local e2=e1:Clone()
+	e2:SetCode(EFFECT_SET_DEFENSE_FINAL)
+	e2:SetValue(atk)
+	c:RegisterEffect(e2)
 end
-function s.filter(c)
+function s.thfilter(c)
 	return (c:IsSetCard(SET_ODD_EYES) or c:IsSetCard(SET_PERFORMAPAL) or c:IsSetCard(SET_MAGICIAN)) and c:IsMonster() and c:IsAbleToHand()
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,0,0)
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK,0,1,1,nil)
+	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
 	if #g>0 then
-		Duel.SendtoHand(g,tp,REASON_EFFECT)
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)
 	end
 end

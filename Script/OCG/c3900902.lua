@@ -1,4 +1,15 @@
 --Predaplant Cactusdraco
+Duel.GetFusionMaterial=(function()
+    local oldfunc=Duel.GetFusionMaterial
+    return function(tp)
+        local res=oldfunc(tp)
+        local g=Duel.GetMatchingGroup(Card.IsHasEffect,tp,LOCATION_ALL,LOCATION_ALL,nil,EFFECT_EXTRA_FUSION_MATERIAL)
+        if #g>0 then
+            res:Merge(g)
+        end
+        return res
+    end
+end)()
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
@@ -12,7 +23,7 @@ function s.initial_effect(c)
 	e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e1:SetCountLimit(1)
-	e1:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK) end)
+	e1:SetCondition(function (e) return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK) end ) 
 	e1:SetOperation(s.regop)
 	c:RegisterEffect(e1)
 	--disable
@@ -48,44 +59,16 @@ s.listed_series={SET_PREDAPLANT,SET_FUSION_DRAGON}
 s.counter_place_list={COUNTER_PREDATOR}
 
 function s.regop(e,tp,eg,ep,ev,re,r,rp)
-	local e1=Effect.CreateEffect(e:GetHandler())
-	e1:SetDescription(aux.Stringid(id,1))
+		local c=e:GetHandler() 
+	--Extra Fusion Material	
+	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_CHAIN_MATERIAL)
-	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e1:SetTargetRange(1,0)
+	e1:SetCode(EFFECT_EXTRA_FUSION_MATERIAL)
+	e1:SetCountLimit(1,id)
+	e1:SetTargetRange(0,LOCATION_ONFIELD)
+	e1:SetValue(function(_,c) return (c:IsSetCard(SET_PREDAPLANT) or c:IsSetCard(SET_FUSION_DRAGON)) end )
 	e1:SetReset(RESET_PHASE+PHASE_END)
-	e1:SetTarget(s.chain_target)
-	e1:SetOperation(s.chain_operation)
-	e1:SetValue(s.chain_value)
 	Duel.RegisterEffect(e1,tp)
-end
-function s.filter(c,e)
-	return c:IsMonster() and c:IsCanBeFusionMaterial() and not c:IsImmuneToEffect(e)
-end
-function s.chain_value(c)
-	return c:IsSetCard(SET_PREDAPLANT) or c:IsSetCard(SET_FUSION_DRAGON) 
-end
-function s.chain_target(e,te,tp,value)
-	if not value or value&SUMMON_TYPE_FUSION==0 then return Group.CreateGroup() end
-	if Duel.IsPlayerAffectedByEffect(tp,69832741) then
-		return Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE+LOCATION_HAND,LOCATION_MZONE,nil,te)
-	else
-		return Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE+LOCATION_HAND,LOCATION_MZONE,nil,te)
-	end
-end
-function s.chain_operation(e,te,tp,tc,mat,sumtype,sg,sumpos)
-	if not sumtype then sumtype=SUMMON_TYPE_FUSION end
-	tc:SetMaterial(mat)
-	Duel.SendtoGrave(mat,REASON_EFFECT+REASON_MATERIAL+REASON_FUSION)
-	if mat:IsExists(Card.IsControler,1,nil,1-tp) then
-	end
-	Duel.BreakEffect()
-	if sg then
-		sg:AddCard(tc)
-	else
-		Duel.SpecialSummon(tc,sumtype,tp,tp,false,false,sumpos)
-	end
 end
 function s.distg(e,c)
 	return c:GetLevel()==1

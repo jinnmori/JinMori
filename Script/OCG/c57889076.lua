@@ -30,7 +30,7 @@ s.listed_series={SET_PHOTON,SET_GALAXY}
 s.listed_names={id}	
 function s.lvtg(e,c)
 local tp=e:GetHandlerPlayer()
-	return c:HasLevel() and c:GetOwner()==tp
+	return c:HasLevel() and c:GetOwner()==tp and c:IsSetCard(SET_PHOTON) or c:IsSetCard(SET_GALAXY)
 end
 function s.lvval(e,c,rc)
 	local lv=c:GetLevel()
