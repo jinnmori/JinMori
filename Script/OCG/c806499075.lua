@@ -1,5 +1,4 @@
 --NEO
---Scripted by Eerie Code
 local s,id=GetID()
 function s.initial_effect(c)
 	--activate
@@ -43,7 +42,7 @@ function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
 	local o=Duel.SelectMatchingCard(tp,s.filter2,tp,LOCATION_HAND+LOCATION_MZONE,0,1,1,nil)
 	Duel.SendtoGrave(o,REASON_COST)
-	local o=Duel.GetOperatedGroup():Filter(Card.IsLocation,nil,LOCATION_GRAVE)
+	local op=Duel.GetOperatedGroup():Filter(Card.IsLocation,nil,LOCATION_GRAVE)
 	Duel.SetTargetCard(o)
 end
 function s.filter(c,e,tp,mc)

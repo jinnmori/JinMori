@@ -77,7 +77,7 @@ function s.setop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.remcon(e,tp,eg,ep,ev,re,r,rp)
-	if ep==tp or c:IsStatus(STATUS_BATTLE_DESTROYED) then return false end
+	if ep==tp or e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) then return false end
 	return re:IsActiveType(TYPE_MONSTER) and Duel.IsChainNegatable(ev)
 end
 function s.remtg(e,tp,eg,ep,ev,re,r,rp,chk)
