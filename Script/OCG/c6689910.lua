@@ -49,6 +49,7 @@ function s.initial_effect(c)
 	p1:SetCategory(CATEGORY_SEARCH+CATEGORY_TOHAND)
 	p1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	p1:SetRange(LOCATION_PZONE)
+	p1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
 	p1:SetCode(EVENT_DESTROYED)
 	p1:SetCountLimit(1,id)
 	p1:SetCondition(s.thcon2)
@@ -86,7 +87,7 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.cfilter(c,tp)
-	return c:IsReason(REASON_EFFECT) and c:GetPreviousControler()==tp
+	return c:IsReason(REASON_BATTLE+REASON_EFFECT) and c:GetPreviousControler()==tp and c:IsPreviousLocation(LOCATION_ONFIELD)
 end
 function s.thcon2(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.cfilter,1,e:GetHandler(),tp)
