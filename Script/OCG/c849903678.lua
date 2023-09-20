@@ -11,7 +11,7 @@ function s.initial_effect(c)
 	e1:SetCode(EFFECT_SPSUMMON_CONDITION)
 	e1:SetValue(aux.fuslimit)
 	c:RegisterEffect(e1)
-	--Return them 
+	--Return as many cards your opponets controls as the fusion materials used to summon this card
 	local e5=Effect.CreateEffect(c)
 	e5:SetCategory(CATEGORY_TOHAND)
 	e5:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
@@ -45,7 +45,7 @@ function s.rettg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsOnField() end
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil) end
 	local ct=e:GetHandler():GetMaterialCount()
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 	local g=Duel.SelectTarget(tp,aux.TRUE,tp,0,LOCATION_ONFIELD,1,ct,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,#g,0,0)
 end
