@@ -3,7 +3,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--Activate
 	local e1=Effect.CreateEffect(c)
-	e1:SetCategory(CATEGORY_DRAW)
+	e1:SetCategory(CATEGORY_TOGRAVE)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
@@ -24,8 +24,8 @@ function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	local max=math.min(ct,lp/100)
 	local t={}
 	for i=1,max do
-		t[i]=i*100
-	end
+        t[i]=i==1 and i*200 or (i)*100
+    end
 	local ac=Duel.AnnounceNumber(tp,table.unpack(t))
 	Duel.PayLPCost(tp,ac)
 	e:SetLabel(ac//100)

@@ -12,6 +12,7 @@ function s.initial_effect(c)
 	e1:SetCode(CARD_NATURIA_CAMELLIA)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetTargetRange(1,0)
+	e1:SetCondition(s.repcon)
 	e1:SetValue(s.repval)
 	e1:SetOperation(s.repop)
 	c:RegisterEffect(e1)
@@ -43,16 +44,21 @@ s.listed_series={SET_INFERNOID}
 function s.lcheck(g,lc,sumtype,tp)
 	return g:IsExists(Card.IsSetCard,1,nil,SET_INFERNOID,lc,sumtype,tp)
 end
+function s.tgfilter(c)
+	return c:IsMonster() and c:IsSetCard(SET_INFERNOID) and c:IsAbleToGrave()
+end
+function s.repcon(e)
+local tp=e:GetHandlerPlayer()
+	return Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_DECK,0,1,nil)
+end
 function s.repval(base,e,tp,eg,ep,ev,re,r,rp,chk,extracon)
 	local c=e:GetHandler()
 	local bc=base:GetHandler()
 	if not bc:GetLinkedGroup():IsContains(c)then return end
 	return c:IsMonster() and c:IsSetCard(SET_INFERNOID)
 end
-function s.tgfilter(c)
-	return c:IsMonster() and c:IsSetCard(SET_INFERNOID) and c:IsAbleToGrave()
-end
 function s.repop(base,e,tp,eg,ep,ev,re,r,rp)
+	local repl=Duel.GetMatchingGroup(s.tgfilter,tp,LOCATION_DECK,0,nil)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
 	local g=Duel.SelectMatchingCard(tp,s.tgfilter,tp,LOCATION_DECK,0,1,1,nil)
 	if #g>0 then
