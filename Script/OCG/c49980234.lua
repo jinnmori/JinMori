@@ -23,6 +23,9 @@ s.listed_series={SET_STARDUST}
 function s.oppfilter(c,tp,self)
 	return c:IsFaceup() and c:IsCanBeSynchroMaterial() and Duel.IsExistingMatchingCard(s.yourfilter,tp,LOCATION_MZONE,0,1,nil,c,tp,self)
 end
+function s.synfilter(c,mg,tp)
+	return c:IsSynchroSummonable(nil,mg) and Duel.GetLocationCountFromEx(tp,tp,mg,c)>0
+end
 function s.yourfilter(c,oppcard,tp,owner)
 	if not (c:IsFaceup() and c:IsCanBeSynchroMaterial()) then return false end
 	local e1=Effect.CreateEffect(owner)
@@ -33,9 +36,6 @@ function s.yourfilter(c,oppcard,tp,owner)
 	local res=Duel.IsExistingMatchingCard(s.synfilter,tp,LOCATION_EXTRA,0,1,nil,mg,tp)
 	e1:Reset()
 	return res
-end
-function s.synfilter(c,mg,tp)
-	return c:IsSynchroSummonable(nil,mg) and Duel.GetLocationCountFromEx(tp,tp,mg,c)>0
 end
 function s.cfilter(c,e,tp)
 	return c:IsFaceup() and c:IsSummonType(SUMMON_TYPE_SYNCHRO) and c:IsSetCard(SET_STARDUST) and c:IsControler(tp)
@@ -57,7 +57,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		tc:RegisterEffect(e1,true)
 		local mg=g:AddCard(oppcard)
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-		local sc=Duel.SelectMatchingCard(tp,s.synfilter,tp,LOCATION_EXTRA,0,1,1,nil,mg):GetFirst()
+		local sc=Duel.SelectMatchingCard(tp,s.synfilter,tp,LOCATION_EXTRA,0,1,1,nil,mg,tp):GetFirst()
 		if sc then
 			local e2=Effect.CreateEffect(c)
 			e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)

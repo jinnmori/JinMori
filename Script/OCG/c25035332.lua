@@ -1,6 +1,6 @@
 --Armory Prototype
 --Scripted by Cat ^•^
-Duel.LoadScript("Archtypes.lua")
+Duel.LoadScript("Archetypes.lua")
 local s,id=GetID()
 function s.initial_effect(c)
 --Add itself to the hand
