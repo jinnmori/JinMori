@@ -46,15 +46,39 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetTarget(s.xyztg)
 	e1:SetValue(s.xyzval)
 	Duel.RegisterEffect(e1,tp)
+	--Xyz Level
+	local e2=Effect.CreateEffect(e:GetHandler())
+	e2:SetType(EFFECT_TYPE_FIELD)
+	e2:SetCode(EFFECT_XYZ_LEVEL)
+	e2:SetProperty(EFFECT_FLAG_SET_AVAILABLE+EFFECT_FLAG_IGNORE_IMMUNE)
+	e2:SetTargetRange(0,LOCATION_MZONE)
+	e2:SetTarget(s.lvtg)
+	e2:SetValue(s.lvval)
+	Duel.RegisterEffect(e2,tp)
 end
 function s.xyztg(e,c)
-	return e:GetHandler():IsLocation(LOCATION_MZONE)
+	return e:GetHandler():IsLocation(LOCATION_MZONE) and c:IsLevelAbove(1) and c:GetOwner()~=e:GetHandlerPlayer()
 end
 	function s.xyzval(e,c,rc,tp)
 	 local c=e:GetHandler()
 	 local zone=c:GetLinkedZone(tp)
 	return rc:IsRace(RACE_ZOMBIE) and c:GetToBeLinkedZone(rc,tp) and rc:IsCanBeSpecialSummoned(e,SUMMON_TYPE_XYZ,tp,false,false,POS_FACEUP,tp,zone)
 	end
+function s.lvtg(e,c)
+	return c:IsLevelAbove(1) and c:GetOwner()~=e:GetHandlerPlayer()
+end
+function s.lvval(e,c,rc)
+	local lv=c:GetLevel()
+	if rc:IsCode(32302078) then
+		return 6
+	elseif rc:IsCode(79459906) then
+		return 7
+		elseif rc:IsCode(73082255) then
+		return 8
+		else
+		return lv
+	end
+end
 	function s.rccon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetCurrentPhase()>=PHASE_BATTLE_START and Duel.GetCurrentPhase()<=PHASE_BATTLE
 end

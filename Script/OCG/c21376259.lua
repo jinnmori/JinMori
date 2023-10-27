@@ -60,7 +60,7 @@ function s.selfspcond(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.costfilter(c)
     return c:IsMonster() and c:IsAttribute(ATTRIBUTE_LIGHT)
-        and ((c:IsLocation(LOCATION_GRAVE) and c:IsAbleToRemoveAsCost())
+        and ((c:IsLocation(LOCATION_GRAVE) and c:IsAbleToRemoveAsCost() and aux.SpElimFilter(c,true))
             or (c:IsAbleToGraveAsCost() and c:IsLocation(LOCATION_HAND) or c:IsFaceup()))
 end
 function s.selfspcost(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -68,7 +68,7 @@ function s.selfspcost(e,tp,eg,ep,ev,re,r,rp,chk)
     local rg=Duel.GetMatchingGroup(s.costfilter,tp,all_locs,0,nil)
     if chk==0 then return #rg>1 and aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),0) end
     local g=aux.SelectUnselectGroup(rg,e,tp,2,2,aux.ChkfMMZ(1),1,tp,aux.Stringid(id,0))
-    local g1,g2=g:Split(Card.IsLocation,nil,LOCATION_GRAVE)
+    local g1,g2=g:Split(Card.IsLocation,nil,LOCATION_MZONE|LOCATION_GRAVE)
     if #g1>0 then
         Duel.Remove(g1,nil,REASON_COST)
     end
