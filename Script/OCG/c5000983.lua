@@ -1,6 +1,6 @@
 --Stardust Spark Warrior 
-Duel.LoadScript=("Effects.lua")
-Duel.LoadScript=("Archlua.lua")
+Duel.LoadScript("Effects.lua")
+Duel.LoadScript("Archlua.lua")
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon

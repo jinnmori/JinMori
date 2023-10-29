@@ -1,5 +1,5 @@
 --Borrel Lacerate Dragon
-Duel.LoadScript=("SP_CARDS.lua")
+Duel.LoadScript("SP_CARDS.lua")
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon

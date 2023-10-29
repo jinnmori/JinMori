@@ -4,7 +4,7 @@ function s.initial_effect(c)
 	--fusion material
 	Fusion.AddProcMixN(c,true,true,aux.FilterBoolFunctionEx(Card.IsSetCard,SET_BLUE_EYES),5)
 	c:EnableReviveLimit()
-		--cannot be fusion material
+	--cannot be fusion material
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
