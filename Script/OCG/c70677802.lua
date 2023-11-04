@@ -4,7 +4,7 @@ function s.initial_effect(c)
 	--Xyz Summon
 	Xyz.AddProcedure(c,nil,4,2)
 	c:EnableReviveLimit()
-		--fusion substitute
+	--fusion substitute
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetCode(EFFECT_FUSION_SUBSTITUTE)
@@ -16,7 +16,6 @@ function s.initial_effect(c)
 	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1,id)
 	e2:SetCost(aux.dxmcostgen(1,1))
 	e2:SetTarget(s.thtg)
 	e2:SetOperation(s.thop)
@@ -28,7 +27,6 @@ function s.initial_effect(c)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCost(aux.dxmcostgen(1,1))
-	e3:SetCountLimit(1,id)
 	c:RegisterEffect(e3)
 end
 s.listed_series={SET_FUSION}
