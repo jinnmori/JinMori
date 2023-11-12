@@ -46,25 +46,25 @@ end
 function s.atttg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return false end
 	if chk==0 then
-			if Duel.IsPlayerAffectedByEffect(1-tp,69832741) then
-			return Duel.IsExistingMatchingCard(Card.IsCanBeEffectTarget,tp,0,0x0e,1,nil,e)
+			if Duel.IsPlayerAffectedByEffect(1-tp,CARD_BLUEEYES_SPIRIT) then
+			return Duel.IsExistingMatchingCard(Card.IsCanBeEffectTarget,tp,0,LOCATION_HAND+LOCATION_ONFIELD,1,nil,e)
 		else
-			return Duel.IsExistingMatchingCard(Card.IsCanBeEffectTarget,tp,0,0x1e,1,nil)
+			return Duel.IsExistingMatchingCard(Card.IsCanBeEffectTarget,tp,0,LOCATION_HAND+LOCATION_ONFIELD+LOCATION_GRAVE,1,nil,e)
 		end
 	end
-	local g1=Duel.GetMatchingGroup(Card.IsCanBeEffectTarget,tp,0,LOCATION_ONFIELD,nil)
-	local g2=Duel.GetMatchingGroup(Card.IsCanBeEffectTarget,tp,0,LOCATION_GRAVE,nil)
-	local g3=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_HAND,nil)
+	local g1=Duel.GetMatchingGroup(Card.IsCanBeEffectTarget,tp,0,LOCATION_ONFIELD,nil,e)
+	local g2=Duel.GetMatchingGroup(Card.IsCanBeEffectTarget,tp,0,LOCATION_GRAVE,nil,e)
+	local g3=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_HAND,nil,e)
 	local sg=Group.CreateGroup()
 	if #g1>0 and ((#g2==0 and #g3==0) or Duel.SelectYesNo(tp,aux.Stringid(id,1))) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
-		local sg1=Duel.SelectTarget(tp,Card.IsCanBeEffectTarget,tp,0,LOCATION_ONFIELD,1,1,nil)
+		local sg1=Duel.SelectTarget(tp,Card.IsCanBeEffectTarget,tp,0,LOCATION_ONFIELD,1,1,nil,e)
 		Duel.HintSelection(sg1)
 		sg:Merge(sg1)
 	end
 	if #g2>0 and ((#sg==0 and #g3==0) or Duel.SelectYesNo(tp,aux.Stringid(id,2))) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
-		local sg2=Duel.SelectTarget(tp,Card.IsCanBeEffectTarget,tp,0,LOCATION_GRAVE,1,1,nil)
+		local sg2=Duel.SelectTarget(tp,Card.IsCanBeEffectTarget,tp,0,LOCATION_GRAVE,1,1,nil,e)
 		Duel.HintSelection(sg2)
 		sg:Merge(sg2)
 	end

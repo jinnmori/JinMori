@@ -9,7 +9,20 @@ function s.initial_effect(c)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
+	--search
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e2:SetType(EFFECT_TYPE_IGNITION)
+	e2:SetRange(LOCATION_GRAVE)
+	e2:SetCountLimit(1,{id,1})
+	e2:SetCondition(aux.exccon)
+	e2:SetCost(aux.bfgcost)
+	e2:SetTarget(s.thtg)
+	e2:SetOperation(s.thop)
+	c:RegisterEffect(e2)
 end
+s.listed_names={CARD_DARK_MAGICIAN,CARD_DARK_MAGICIAN_GIRL}
 s.listed_series={SET_DARK_MAGICIAN,SET_MAGICIAN_GIRL}
 function s.filter(c)
 	return c:IsFaceup() and c:IsRace(RACE_SPELLCASTER)
@@ -51,7 +64,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 				e4:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 				oc:RegisterEffect(e4)
 			--Check if Dark magician on the field 
-		else if tc:IsSetCard(SET_DARK_MAGICIAN) then
+		elseif tc:IsSetCard(SET_DARK_MAGICIAN) then
 		local p=Duel.GetMatchingGroup(nil,tp,0,LOCATION_MZONE,c)
 		for pc in aux.Next(p) do
 		   --Change ATK to 0
@@ -61,10 +74,23 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 			e1:SetValue(0)
 			e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 			pc:RegisterEffect(e1)
-		          end
-	          end
-         end
-		   end
-     end  
+				end
+			end
+		end
 	end
-	
+end	
+function s.thfilter(c)
+	return c:IsCode({CARD_DARK_MAGICIAN,CARD_DARK_MAGICIAN_GIRL}) and c:IsAbleToHand()
+end
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+end
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
+	if #g>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+	end
+end
