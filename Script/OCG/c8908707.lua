@@ -4,7 +4,7 @@ function s.initial_effect(c)
 	--Fusion Summon
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,true,true,aux.FilterBoolFunctionEx(Card.IsType,TYPE_EFFECT),s.matfilter)
-	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.splimit)
+	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.splimit,nil,nil,nil,false)
 	--Cannot be used as fusion material
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -48,7 +48,7 @@ function s.matfilter(c,fc,sumtype,tp)
 	return c:IsSummonCode(fc,sumtype,tp,CARD_REVENDREAD_SLAYER) and c:IsControler(tp)
 end
 function s.splimit(e,se,sp,st)
-	return e:GetHandler():GetLocation()~=LOCATION_EXTRA
+	return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION or e:GetHandler():GetLocation()~=LOCATION_EXTRA 
 end
 function s.contactfil(tp)
 	return Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil,tp)
