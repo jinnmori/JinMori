@@ -4,7 +4,7 @@ function s.initial_effect(c)
 	--fusion material
 	c:EnableReviveLimit()
 	Fusion.AddProcMixN(c,true,true,aux.FilterBoolFunctionEx(Card.IsSetCard,SET_PREDAPLANT),1,s.mfilter,1)
-	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.fuslimit,nil,nil,false)
+	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.fuslimit,nil,nil,nil,false)
 	--cannot be fusion material
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -38,7 +38,7 @@ function s.mfilter(c,fc,sumtype,tp,sub,mg,sg,contact)
 	return c:GetCounter(COUNTER_PREDATOR,fc,sumtype,tp)>0 and (not contact or c:IsType(TYPE_MONSTER,fc,sumtype,tp))
 end
 function s.fuslimit(e,se,sp,st)
-    return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION
+   return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION or e:GetHandler():GetLocation()~=LOCATION_EXTRA 
 end
 function s.contactfil(tp)
 	return Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil,tp)

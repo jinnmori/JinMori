@@ -3,7 +3,7 @@ REGISTER_FLAG_DWORLD=  9
 Card.RegisterEffect=(function()
 	local oldf=Card.RegisterEffect
 	local function map_to_effect_code(val)
-		if val==9 then return 67985556 end -- access to tellarknights/constellar effects that activate when Normal Summoned
+		if val==9 then return 67985556 end -- access to Dark World effects that activate when Sent to GY as its discarded
 		return nil
 	end
 	return function(c,e,forced,...)

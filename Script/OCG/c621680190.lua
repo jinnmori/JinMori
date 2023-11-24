@@ -29,7 +29,7 @@ s.listed_series={SET_JUNK,SET_SYNCHRON}
 s.listed_names={CARD_STARDUST_DRAGON,id}
 	
 function s.filter(c,e,tp)
-	return c:IsSetCard(SET_JUNK) or c:IsCode(CARD_STARDUST_DRAGON) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_DEFENSE)
+	return (c:IsSetCard(SET_JUNK) and c:IsMonster()) or c:IsCode(CARD_STARDUST_DRAGON) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_DEFENSE)
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and s.filter(chkc,e,tp) end

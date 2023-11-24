@@ -44,7 +44,7 @@ function s.initial_effect(c)
 	e4:SetCost(aux.bfgcost)
 	e4:SetCondition(s.darcon)
 	e4:SetTarget(s.dartg)
-	e4:SetOperation(s.darop)
+	e4:SetOperation(s.darop)z
 	c:RegisterEffect(e4)
 	local e5=e4:Clone()
 	e5:SetCode(EVENT_BATTLE_DESTROYED)

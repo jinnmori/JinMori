@@ -4,7 +4,7 @@ function s.initial_effect(c)
 	--fusion material
 	c:EnableReviveLimit()
 	Fusion.AddProcMixRep(c,true,true,s.mfilter,2,99,aux.FilterBoolFunctionEx(Card.IsSetCard,SET_ANCIENT_GEAR))
-	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.fuslimit,nil,nil,false)
+	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.fuslimit,nil,nil,nil,false)
 	--Pierce 
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
@@ -36,7 +36,7 @@ s.material_setcode={SET_ANCIENT_GEAR}
 s.listed_series={SET_ANCIENT_GEAR,SET_GADGET}
 
 function s.fuslimit(e,se,sp,st)
-    return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION
+   return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION or e:GetHandler():GetLocation()~=LOCATION_EXTRA 
 end
 function s.mfilter(c,fc,sumtype,tp,sub,mg,sg,contact)
 	if contact then sumtype=0 end

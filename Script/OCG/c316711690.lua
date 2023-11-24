@@ -4,7 +4,7 @@ function s.initial_effect(c)
 	--fusion material
 	c:EnableReviveLimit()
 	Fusion.AddProcMixN(c,true,true,CARD_NEOS,1,s.ffilter,4)
-	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.fuslimit,nil,nil,false)
+	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.fuslimit,nil,nil,nil,false)
 	--Gains effects based on material
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
@@ -27,7 +27,7 @@ s.listed_names={CARD_NEOS}
 s.material_setcode={SET_NEOS,SET_NEO_SPACIAN,SET_HERO}
 
 function s.fuslimit(e,se,sp,st)
-	return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION
+	return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION or e:GetHandler():GetLocation()~=LOCATION_EXTRA 
 end
 	function s.ffilter(c,fc,sumtype,tp)
 	return (c:IsSetCard(SET_HERO,fc,sumtype,tp) or c:IsSetCard(SET_NEOS,fc,sumtype,tp) or c:IsSetCard(SET_NEO_SPACIAN,fc,sumtype,tp)) and c:IsMonster(fc,sumtype,tp)

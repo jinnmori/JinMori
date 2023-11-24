@@ -4,7 +4,7 @@ function s.initial_effect(c)
 	--fusion material
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,true,true,CARD_BLUEEYES_W_DRAGON,s.fusfilter)
-	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.fuslimit,nil,nil,false)
+	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.fuslimit,nil,nil,nil,false)
 	--Card Effect indestructable
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -37,9 +37,10 @@ function s.initial_effect(c)
 	aux.DoubleSnareValidity(c,LOCATION_MZONE)
 end
 s.listed_names={CARD_BLUEEYES_W_DRAGON}
+s.material_setcode={SET_BLUE_EYS}
    
-    function s.fuslimit(e,se,sp,st)
-    return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION
+function s.fuslimit(e,se,sp,st)
+    return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION or e:GetHandler():GetLocation()~=LOCATION_EXTRA 
 end
   function s.fusfilter(c,fc,sumtype,tp,sub,mg,sg,contact)
     if contact then sumtype=0 end

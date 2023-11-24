@@ -5,7 +5,7 @@ function s.initial_effect(c)
 	--fusion material
 	c:EnableReviveLimit()
 	Fusion.AddProcMixN(c,true,true,CARD_ANCIENT_GOLEM,1,aux.FilterBoolFunctionEx(Card.IsRace,RACE_MACHINE),1)
-	Fusion.AddContactProc(c,s.contactfil,s.contactop,nil,nil,nil,false)
+	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.splimit,nil,nil,nil,false)
 	--atk
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)
@@ -54,6 +54,9 @@ function s.cfilter(c,tp)
 end
 function s.contactop(g,tp,c)
 	Duel.SendtoGrave(g,REASON_COST+REASON_MATERIAL)
+end
+function s.splimit(e,se,sp,st)
+	return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION or e:GetHandler():GetLocation()~=LOCATION_EXTRA 
 end
 function s.valcheck(e,c)
 local g=c:GetMaterial()
