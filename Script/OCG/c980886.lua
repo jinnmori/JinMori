@@ -43,6 +43,7 @@ function s.initial_effect(c)
 	--Special Summon when sent to the GY
 	local e9=Effect.CreateEffect(c)
 	e9:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e9:SetDescription(aux.Stringid(id,0))
 	e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e9:SetProperty(EFFECT_FLAG_DELAY)
 	e9:SetCode(EVENT_TO_GRAVE)
