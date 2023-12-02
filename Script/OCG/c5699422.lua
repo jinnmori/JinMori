@@ -1,12 +1,11 @@
 --Ultimate Asura Utopia Ray
---Scripted by Eerie Code
 Duel.LoadCardScript("c56840427.lua")
 local s,id=GetID()
 function s.initial_effect(c)
---Xyz Summon
-Xyz.AddProcedure(c,nil,5,3)
-c:EnableReviveLimit()
---Attach ZW
+	--Xyz Summon
+	Xyz.AddProcedure(c,nil,5,3)
+	c:EnableReviveLimit()
+	--Attach ZW
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetType(EFFECT_TYPE_IGNITION)
@@ -17,10 +16,10 @@ c:EnableReviveLimit()
 	e1:SetTarget(s.zwtg) 
 	e1:SetOperation(s.zwop)
 	c:RegisterEffect(e1,false,REGISTER_FLAG_DETACH_XMAT)
-	--negate
-	  e2=Effect.CreateEffect(c)
+	--negate the activation then equip 1 "ZW" from your attached cards
+	e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
-	e2:SetCategory(CATEGORY_NEGATE+CATEGORY_DESTROY)
+	e2:SetCategory(CATEGORY_NEGATE+CATEGORY_DESTROY+CATEGORY_EQUIP)
 	e2:SetType(EFFECT_TYPE_QUICK_O)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1)
@@ -38,7 +37,7 @@ function s.filter(c,tc,tp)
 	if not (c:IsSetCard(SET_ZW) and not c:IsForbidden()) then return false end
 	local effs={c:GetCardEffect(75402014)}
 	for _,te in ipairs(effs) do
-		if te:GetValue()(tc,c,tp) then return true end
+	if te:GetValue()(tc,c,tp) then return true end
 	end
 	return false
 end
@@ -49,7 +48,7 @@ end
 function s.zwtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK+LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e:GetHandler(),tp)end
    end
-	function s.zwop(e,tp,eg,ep,ev,re,r,rp)
+function s.zwop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not c:IsRelateToEffect(e) then return end
 	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK+LOCATION_HAND+LOCATION_GRAVE,0,1,2,nil,c,tp)
@@ -57,13 +56,13 @@ function s.zwtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.Overlay(c,g)
 	end
 end
-function s.discfilter(c)
+function s.zwcfilter(c)
 	return c:IsSetCard(SET_ZW) and c:GetOriginalType() & TYPE_MONSTER ~= 0
 end
 function s.discon(e,tp,eg,ep,ev,re,r,rp)
- return rp~=tp and not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and 
-            re:IsActiveType(TYPE_SPELL+TYPE_TRAP) and Duel.IsChainNegatable(ev) and e:GetHandler():GetOverlayGroup():IsExists(s.discfilter,1,99)
-    end
+ return rp~=tp and not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and re:IsActiveType(TYPE_SPELL+TYPE_TRAP) 
+ and Duel.IsChainNegatable(ev) and e:GetHandler():GetOverlayGroup():IsExists(s.zwcfilter,1,nil) and Duel.GetLocationCount(tp,LOCATION_SZONE)>0
+end
 function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetTargetPlayer(1-tp)
@@ -76,17 +75,17 @@ end
 function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not c:IsRelateToEffect(e) then return end
-	local g=c:GetOverlayGroup():FilterSelect(tp,Card.IsSetCard,1,1,nil,SET_ZW)
+	local g=c:GetOverlayGroup():FilterSelect(tp,s.zwcfilter,1,1,nil)
 	local tc=g:GetFirst()
 	if #g>0 then
 		Duel.Equip(tp,g:GetFirst(),c)
 		Duel.ConfirmCards(1-tp,g) end
 	local tc=g:GetFirst()
 	if tc then
+	local eff=tc:GetCardEffect(75402014)
+	eff:GetOperation()(tc,eff:GetLabelObject(),tp,c)
 	if Duel.NegateActivation(ev) and re:GetHandler():IsRelateToEffect(re) then 
 		Duel.Destroy(eg,REASON_EFFECT) 
-		local eff=tc:GetCardEffect(75402014)
-		eff:GetOperation()(tc,eff:GetLabelObject(),tp,c)
 		end
-  end
+	end
 end

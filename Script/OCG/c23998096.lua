@@ -52,7 +52,6 @@ function s.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
 end
 function s.damcon(e,tp,eg,ep,ev,re,r,rp)
-  Debug.Message(Duel.GetBattleDamage(1-tp)<3000 and (Duel.GetAttacker()==e:GetHandler() or (Duel.GetAttackTarget() and Duel.GetAttackTarget()==e:GetHandler())))
 	return Duel.GetBattleDamage(1-tp)<3000 and (Duel.GetAttacker()==e:GetHandler() or (Duel.GetAttackTarget() and Duel.GetAttackTarget()==e:GetHandler()))
 end
 function s.damop(e,tp,eg,ep,ev,re,r,rp)

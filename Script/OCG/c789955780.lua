@@ -5,12 +5,11 @@ function s.initial_effect(c)
 	--fusion material
 	Fusion.AddProcMixN(c,true,true,aux.FilterBoolFunctionEx(Card.IsRace,RACE_CYBERSE),1,aux.FilterBoolFunctionEx(Card.IsType,TYPE_EFFECT),1)
 	c:EnableReviveLimit()
-	--cannot attack
+	--Cannot be Used As Link Material the turn its special summoned
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
-	e1:SetOperation(s.atklimit)
+	e1:SetOperation(s.linklimit)
 	c:RegisterEffect(e1)
 	--Halve Atk
 	local e2=Effect.CreateEffect(c)
@@ -34,7 +33,7 @@ function s.initial_effect(c)
 	e3:SetOperation(s.btop)
 	c:RegisterEffect(e3)
 end
-	function s.atklimit(e,tp,eg,ep,ev,re,r,rp)
+	function s.linklimit(e,tp,eg,ep,ev,re,r,rp)
 	local e1=Effect.CreateEffect(e:GetHandler())
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
@@ -42,8 +41,8 @@ end
 	e1:SetValue(1)
 	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 	e:GetHandler():RegisterEffect(e1)
-	end
-	function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and aux.nzatk(chkc) end
 	if chk==0 then return Duel.IsExistingTarget(aux.nzatk,tp,0,LOCATION_MZONE,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
@@ -76,6 +75,6 @@ function s.btop(e,tp,eg,ep,ev,re,r,rp)
 		e2:SetValue(aux.ChangeBattleDamage(1,DOUBLE_DAMAGE))
 		e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
 		tc:RegisterEffect(e2)
-		end
-      end
+	end
+end
 	

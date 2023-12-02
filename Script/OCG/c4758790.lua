@@ -20,7 +20,7 @@ function s.initial_effect(c)
 	e3:SetValue(s.valcheck)
 	e3:SetLabelObject(e1)
 	c:RegisterEffect(e3)
-		--cannot be target
+	--cannot be target
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE)
 	e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
@@ -46,7 +46,7 @@ function s.initial_effect(c)
 	e6:SetTargetRange(0,LOCATION_MZONE)
 	e6:SetValue(s.atkval)
 	c:RegisterEffect(e6)
-		--Negate the activation of card/effect
+	--Negate the activation of card/effect
 	local e7=Effect.CreateEffect(c)
 	e7:SetDescription(aux.Stringid(id,0))
 	e7:SetCategory(CATEGORY_NEGATE+CATEGORY_REMOVE+CATEGORY_DESTROY)

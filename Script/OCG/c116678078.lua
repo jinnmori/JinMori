@@ -31,22 +31,19 @@ function s.initial_effect(c)
 end
 s.listed_series={SET_JUNK,SET_SYNCHRON}
 function s.gspconfilter(c,tp)
-	return c:IsSummonPlayer(tp) and c:GetSummonLocation(LOCATION_EXTRA)
+	return c:IsFaceup() and c:IsSummonLocation(LOCATION_EXTRA) and not c:IsControler(tp)
 end
 function s.gspcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.gspconfilter,1,nil,1-tp)
 end
-function s.disfilter(c,p)
-	return c:IsFaceup() and c:IsSummonLocation(LOCATION_EXTRA) and not c:IsControler(p)
-	end
 function s.gsptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false)
 		and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and
-		eg:IsExists(s.disfilter,1,nil,tp,nil) end
-	    local tg=eg:Filter(s.disfilter,nil,tp,nil)
+		eg:IsExists(s.gspconfilter,1,nil,tp) end
+	    local tg=eg:Filter(s.gspconfilter,nil,tp,nil)
 		Duel.SetTargetCard(tg)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
-	end
+end
 function s.gspop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)

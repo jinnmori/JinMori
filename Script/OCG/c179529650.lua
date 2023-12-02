@@ -16,12 +16,13 @@ function s.initial_effect(c)
 	--Special Summon 
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
-	e2:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOHAND)
+	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_DESTROYED)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetCountLimit(1,id+1)
+	e2:SetCost(aux.bfgcost)
 	e2:SetCondition(s.spcon)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
@@ -34,14 +35,14 @@ function s.atkcost1(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsDiscardable() end
 	Duel.SendtoGrave(e:GetHandler(),REASON_COST+REASON_DISCARD)
 end
-function s.atkfilter(c)
-	return c:IsFaceup() and c:IsSetCard(SET_ANCIENT_GEAR) and c:IsCanBeEffectTarget()
+function s.atkfilter(c,e)
+	return c:IsFaceup() and c:IsSetCard(SET_ANCIENT_GEAR) and c:IsCanBeEffectTarget(e)
 end
 function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and s.atkfilter(chkc) end
-	if chk==0 then return Duel.IsExistingTarget(s.atkfilter,tp,LOCATION_MZONE,0,1,nil) end
+	if chk==0 then return Duel.IsExistingTarget(s.atkfilter,tp,LOCATION_MZONE,0,1,nil,e) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
-	Duel.SelectTarget(tp,s.atkfilter,tp,LOCATION_MZONE,0,1,1,nil)
+	Duel.SelectTarget(tp,s.atkfilter,tp,LOCATION_MZONE,0,1,1,nil,e)
 end
 function s.atkop1(e,tp,eg,ep,ev,re,r,rp,chk)
 	local tc=Duel.GetFirstTarget()
@@ -55,27 +56,27 @@ function s.atkop1(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 end
 function s.spfilter(c,e,tp)
-	return (c:IsCode(CARD_ANCIENT_GOLEM) or c:IsCode(CARD_ANCIENT_POUND)) and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
+	return c:IsCode(CARD_ANCIENT_GOLEM,CARD_ANCIENT_POUND) and c:IsCanBeSpecialSummoned(e,0,tp,true,true)
 end
 function s.thcfilter(c,tp)
-	return c:IsPreviousControler(tp) and c:IsSetCard(SET_ANCIENT_GEAR) and c:IsReason(REASON_BATTLE+REASON_EFFECT)
+	return c:IsSetCard(SET_ANCIENT_GEAR) and c:IsControler(tp)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	return eg and eg:IsExists(s.thcfilter,1,e:GetHandler(),tp) and e:GetHandler():GetLocation(LOCATION_GRAVE)
+	return eg and eg:IsExists(s.thcfilter,1,nil,tp)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
   local loc=LOCATION_DECK|LOCATION_HAND|LOCATION_GRAVE
-	if chk==0 then return Duel.IsExistingMatchingCard(s.spfilter,tp,loc,0,1,nil,e,tp) and e:GetHandler():IsAbleToRemove() end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.spfilter,tp,loc,0,1,nil,e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,loc)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
-  local loc=LOCATION_DECK|LOCATION_HAND|LOCATION_GRAVE
+	local loc=LOCATION_DECK|LOCATION_HAND|LOCATION_GRAVE
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then
-		Duel.Remove(c,POS_FACEUP,REASON_EFFECT+REASON_COST) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,loc,0,1,1,nil,e,tp)
 	if #g>0 then
-		Duel.SpecialSummon(g,0,tp,tp,true,false,POS_FACEUP)
+		Duel.SpecialSummon(g,0,tp,tp,true,true,POS_FACEUP)
+		end
 	end
 end

@@ -93,7 +93,7 @@ function s.thop1(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.negcon(e,tp,eg,ep,ev,re,r,rp)
-	return re:GetActivateLocation()==LOCATION_HAND and Duel.IsChainNegatable(ev)
+	return re:GetHandler():IsLocation(LOCATION_HAND) and Duel.IsChainNegatable(ev)
 end
 function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
