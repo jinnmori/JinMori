@@ -43,7 +43,9 @@ function s.aclimit(e,re,tp)
 	return re:IsActiveType(TYPE_TRAP)
 end
 function s.copfilter(c)
-    return c:IsAbleToGraveAsCost() and ((c:IsSetCard(SET_DARKLORD) and c:IsType(TYPE_NORMAL)) or (c:IsSetCard(SET_FORBIDDEN) and c:IsType(TYPE_QUICKPLAY))) and c:IsSpellTrap() and c:CheckActivateEffect(true,true,false)~=nil 
+	local darklord=c:IsSetCard(SET_DARKLORD) and (c:IsNormalSpell() or c:IsNormalTrap())
+	local forbidden=c:IsSetCard(SET_FORBIDDEN) and c:IsSpell() and c:IsType(TYPE_QUICKPLAY)
+    return c:IsAbleToGraveAsCost() and (forbidden or darklord) and c:CheckActivateEffect(true,true,false)~=nil 
 end
 function s.cpcost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.CheckLPCost(tp,1000) and Duel.IsExistingMatchingCard(s.copfilter,tp,LOCATION_DECK,0,1,nil) end

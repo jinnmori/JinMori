@@ -14,12 +14,12 @@ function s.initial_effect(c)
 	--Prevent effect target
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
-	e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e3:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+	e2:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e2:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
 	e2:SetRange(LOCATION_SZONE)
 	e2:SetTargetRange(LOCATION_MZONE,0)
 	e2:SetTarget(aux.TargetBoolFunction(Card.IsAttribute,ATTRIBUTE_DARK))
-	e3:SetValue(aux.tgoval)
+	e2:SetValue(aux.tgoval)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_DARKLORD}

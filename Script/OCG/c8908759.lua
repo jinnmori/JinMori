@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
-	Synchro.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsAttribute,ATTRIBUTE_DARK),1,1,Synchro.NonTunerEx(Card.IsAttribute,ATTRIBUTE_LIGHT),1,99)
+	Synchro.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsAttribute,ATTRIBUTE_DARK),1,1,Synchro.NonTuner(Card.IsAttribute,ATTRIBUTE_LIGHT),1,99)
 	c:EnableReviveLimit()
 	--negate
 	local e1=Effect.CreateEffect(c)
@@ -38,7 +38,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 	--Special Summon 1 "Darklord MorningStar"
 	local e4=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,4))
+	e4:SetDescription(aux.Stringid(id,4))
 	e4:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
 	e4:SetProperty(EFFECT_FLAG_DELAY)
 	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -174,6 +174,6 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if ft>0 and Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) then loc=LOCATION_DECK+LOCATION_HAND end
 	 local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,loc,0,1,1,nil,e,tp)
 	 if #g>0 then
-	Duel.SpecialSummon(mg,0,tp,tp,true,true,POS_FACEUP)
+	Duel.SpecialSummon(g,0,tp,tp,true,true,POS_FACEUP)
 	end
 end
