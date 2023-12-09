@@ -40,7 +40,7 @@ c:SetUniqueOnField(1,0,id)
 	--copy effect
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,2))
-	e4:SetCategory(CATEGORY_TODECK)
+	e4:SetCategory(CATEGORY_TOGRAVE)
 	e4:SetType(EFFECT_TYPE_QUICK_O)
 	e4:SetRange(LOCATION_MZONE)
 	e4:SetCode(EVENT_FREE_CHAIN)

@@ -24,7 +24,7 @@ function s.initial_effect(c)
 	--copy effect
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,2))
-	e2:SetCategory(CATEGORY_TODECK)
+	e2:SetCategory(CATEGORY_TOGRAVE)
 	e2:SetType(EFFECT_TYPE_QUICK_O)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCode(EVENT_FREE_CHAIN)
@@ -43,7 +43,7 @@ function s.aclimit(e,re,tp)
 	return re:IsActiveType(TYPE_TRAP)
 end
 function s.copfilter(c)
-    return c:IsAbleToGraveAsCost() and c:IsSetCard(SET_DARKLORD) and c:IsType(TYPE_SPELL+TYPE_TRAP) and c:CheckActivateEffect(true,true,false)~=nil 
+    return c:IsAbleToGraveAsCost() and ((c:IsSetCard(SET_DARKLORD) and c:IsType(TYPE_NORMAL)) or (c:IsSetCard(SET_FORBIDDEN) and c:IsType(TYPE_QUICKPLAY))) and c:IsSpellTrap() and c:CheckActivateEffect(true,true,false)~=nil 
 end
 function s.cpcost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.CheckLPCost(tp,1000) and Duel.IsExistingMatchingCard(s.copfilter,tp,LOCATION_DECK,0,1,nil) end

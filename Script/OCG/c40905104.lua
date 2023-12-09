@@ -16,7 +16,7 @@ function s.initial_effect(c)
 	--Draw 3 cards
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e1:SetProperty(EFFECT_FLAG_DELAY)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e1:SetCondition(s.drwcon)
 	e1:SetTarget(s.drwtg)
@@ -43,7 +43,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 	end
 	s.listed_series={SET_DARKLORD}
-	s.listed_names={CARD_IXCHEL}
+	s.listed_names={52840267}
 	s.material_setcode={SET_DARKLORD}
 	function s.ffilter(c,fc,sumtype,tp,sub,mg,sg)
 	return c:IsAttribute(ATTRIBUTE_DARK,fc,sumtype,tp) and c:IsLevelAbove(4,fc,sumtype,tp)
@@ -52,7 +52,7 @@ function s.indtg(e,c)
 	return c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_FAIRY)
 end
 function s.valcheck(e,c)
-	if c:GetMaterial():IsExists(Card.IsCode,1,nil,CARD_IXCHEL) then
+	if c:GetMaterial():IsExists(Card.IsCode,1,nil,52840267) then
 		e:GetLabelObject():SetLabel(1) 
 		end
 end
