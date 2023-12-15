@@ -101,6 +101,6 @@ function s.spop1(e,tp,eg,ep,ev,re,r,rp)
 	end
 function s.spcon2(e,tp,eg,ep,ev,re,r,rp)
  local c=e:GetHandler()
-	return (e:GetHandler():IsReason(REASON_COST+REASON_EFFECT) and re:IsActivated() and re:GetHandler():IsSetCard(SET_DARKLORD)) 
-	or re:GetHandler():IsHasEffect(CARD_NATURIA_CAMELLIA)
+	return (e:GetHandler():IsReason(REASON_COST+REASON_EFFECT) and re:IsActivated() and re and re:GetHandler():IsSetCard(SET_DARKLORD)) 
+	or re and re:GetHandler():IsHasEffect(CARD_NATURIA_CAMELLIA,tp)
 end
