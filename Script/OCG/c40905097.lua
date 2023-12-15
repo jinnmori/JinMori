@@ -13,41 +13,42 @@ function s.initial_effect(c)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
 	--Special Summon 1 Darklord
-	local e3=Effect.CreateEffect(c)
-	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e3:SetDescription(aux.Stringid(id,1))
-	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e3:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
-	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e3:SetCountLimit(1,id+1)
-	e3:SetTarget(s.sumtg)
-	e3:SetOperation(s.sumop)
-	c:RegisterEffect(e3)
-	--copy effect
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,2))
-	e2:SetCategory(CATEGORY_TODECK)
-	e2:SetType(EFFECT_TYPE_QUICK_O)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCode(EVENT_FREE_CHAIN)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e2:SetCountLimit(1,id+2)
-	e2:SetCost(s.cpcost)
-	e2:SetTarget(s.cptg)
-	e2:SetOperation(s.cpop)
+	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
+	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e2:SetCountLimit(1,{id,1})
+	e2:SetCost(s.spcost1)
+	e2:SetTarget(s.sptg1)
+	e2:SetOperation(s.spop1)
 	c:RegisterEffect(e2)
+	--copy effect
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,2))
+	e3:SetCategory(CATEGORY_TODECK)
+	e3:SetType(EFFECT_TYPE_QUICK_O)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCode(EVENT_FREE_CHAIN)
+	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e3:SetCountLimit(1,{id,2})
+	e3:SetCost(s.cpcost)
+	e3:SetTarget(s.cptg)
+	e3:SetOperation(s.cpop)
+	c:RegisterEffect(e3)
 end
 s.listed_series={SET_DARKLORD}
 s.listed_names={id}
 function s.cfilter(c)
-	return c:IsSetCard(SET_DARKLORD) and c:IsAbleToRemoveAsCost()
+	return c:IsSetCard(SET_DARKLORD) and c:IsAbleToRemoveAsCost() and not c:IsCode(id)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 local c=e:GetHandler()
   local loc= LOCATION_HAND|LOCATION_ONFIELD|LOCATION_GRAVE 
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,loc,0,2,c) end
-	local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,loc,0,2,2,c,e,tp)
-	Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
+	local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,loc,0,2,2,c)
+	Duel.Remove(g,POS_FACEUP,REASON_COST)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 local c=e:GetHandler()
@@ -61,21 +62,31 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 end
 function s.spfilter1(c,e,tp)
-return c:IsSetCard(SET_DARKLORD) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and c:IsLevelBelow(8)
+	return c:IsSetCard(SET_DARKLORD) and c:IsLevelBelow(8) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
-function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,nil) and Duel.IsExistingMatchingCard(s.spfilter1,tp,LOCATION_DECK,0,1,nil,e,tp) end
-	end
-	function s.sumop(e,tp,eg,ep,ev,re,r,rp)
-	local discard=Duel.DiscardHand(tp,nil,1,2,REASON_EFFECT+REASON_DISCARD)
-	if discard==0 then return end
-	local dg=Duel.GetMatchingGroup(s.spfilter1,tp,LOCATION_DECK,0,nil,e,tp)
-	if #dg>0 then
-		Duel.BreakEffect()
+function s.spcost1(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,nil) end
+	local ct=2
+	if Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) then ct=1 end
+	ct=math.min(ct,Duel.GetLocationCount(tp,LOCATION_MZONE),
+		Duel.GetMatchingGroupCount(s.spfilter1,tp,LOCATION_DECK,0,nil,e,tp))
+	local cg=Duel.DiscardHand(tp,Card.IsDiscardable,1,ct,REASON_COST+REASON_DISCARD,nil)
+	e:SetLabel(cg)
+end
+function s.sptg1(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and Duel.IsExistingMatchingCard(s.spfilter1,tp,LOCATION_DECK,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,e:GetLabel(),tp,LOCATION_DECK)
+end
+function s.spop1(e,tp,eg,ep,ev,re,r,rp,chk)
+	local ct=e:GetLabel()
+	local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
+	if ft>=ct then
+		if ft>1 and ct>1 and Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) then return end
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-		local sg=dg:Select(tp,discard,discard,nil)
-		Duel.HintSelection(sg)
-		Duel.SpecialSummon(sg,0,tp,tp,false,false,POS_FACEUP)
+		local g=Duel.SelectMatchingCard(tp,s.spfilter1,tp,LOCATION_DECK,0,ct,ct,nil,e,tp)
+		if #g>0 then
+			Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+		end
 	end
 end
 function s.cpcost(e,tp,eg,ep,ev,re,r,rp,chk)

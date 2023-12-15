@@ -22,7 +22,6 @@ function s.initial_effect(c)
 	local e2=e1:Clone()
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCost(s.negcost2)
-	e2:SetCountLimit(1,id)
 	c:RegisterEffect(e2)
 	--copy effect
 	local e3=Effect.CreateEffect(c)
@@ -42,16 +41,11 @@ function s.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
 	e4:SetProperty(EFFECT_FLAG_DELAY)
 	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e4:SetCode(EVENT_TO_GRAVE)
+	e4:SetCountLimit(1,{id,2})
+	e4:SetCode(EVENT_LEAVE_FIELD)
 	e4:SetTarget(s.sptg)
 	e4:SetOperation(s.spop)
 	c:RegisterEffect(e4)
-	local e5=e4:Clone()
-	e5:SetCode(EVENT_REMOVE)
-	c:RegisterEffect(e5)
-	local e6=e4:Clone()
-	e6:SetCode(EVENT_TO_DECK)
-	c:RegisterEffect(e6) 
 end
 s.listed_series={SET_DARKLORD}
 s.listed_names={id,25451652}
@@ -69,8 +63,10 @@ function s.negcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	 local g1=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_HAND,0,c)
 	if chk==0 then return aux.SelectUnselectGroup(g1,e,tp,1,1,s.rescon,0) end
 	local g=aux.SelectUnselectGroup(g1,e,tp,1,1,s.rescon,1,tp,HINTMSG_TOGRAVE)
-	Duel.SendtoGrave(g,REASON_COST+REASON_EFFECT+REASON_DISCARD)
-	e:SetLabelObject(g:GetFirst())
+	Duel.SendtoGrave(g,REASON_COST+REASON_DISCARD)
+	if g:GetFirst():IsAttack(2800) or g:GetFirst():IsDefense(2300) then 
+	e:SetLabel(1) 
+	else e:SetLabel(0) end
 end
 function s.negcost2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.remfilter,tp,LOCATION_GRAVE,0,1,nil) end
@@ -78,7 +74,9 @@ function s.negcost2(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
 	local g=Duel.SelectMatchingCard(tp,s.remfilter,tp,LOCATION_GRAVE,0,1,1,nil)
 	Duel.Remove(g,POS_FACEUP,REASON_COST)
-	e:SetLabelObject(g:GetFirst())
+	if g:GetFirst():IsAttack(2800) or g:GetFirst():IsDefense(2300) then 
+	e:SetLabel(1) 
+	else e:SetLabel(0) end
 end
 function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsNegatable() end
@@ -114,10 +112,10 @@ function s.negop(e,tp,eg,ep,ev,re,r,rp)
 			e3:SetReset(RESET_EVENT+RESETS_STANDARD)
 			tc:RegisterEffect(e3)
 			end
-			if card:IsAttack(2800) or card:IsDefense(2300) and Duel.SelectYesNo(tp,aux.Stringid(id,2)) then
+			if e:GetLabel()==1 and Duel.SelectYesNo(tp,aux.Stringid(id,2)) then
 			Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)
 		end
-	end
+	end	
 end
 function s.copfilter(c)
     return c:IsAbleToGraveAsCost() and c:IsSetCard(SET_DARKLORD) and c:IsSpellTrap() and c:CheckActivateEffect(true,true,false)~=nil 

@@ -51,7 +51,7 @@ function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	aux.RegisterClientHint(e:GetHandler(),nil,tp,1,0,aux.Stringid(id,2),nil)
 end
 function s.splimit(e,c,sump,sumtype,sumpos,targetp,se)
-	return not c:IsAttribute(ATTRIBUTE_DARK) and c:IsLocation(LOCATION_ALL)
+	return not c:IsAttribute(ATTRIBUTE_DARK)
 end
 function s.spfilter(c,e,tp)
 	return c:IsSetCard(SET_DARKLORD) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP)

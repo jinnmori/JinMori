@@ -11,8 +11,9 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e2:SetTarget(s.sumtg)
-	e2:SetOperation(s.sumop)
+	e2:SetCondition(s.spcon)
+	e2:SetTarget(s.sptg)
+	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
 	--Destroy 1 card your opponent controls
 	local e3=Effect.CreateEffect(c)
@@ -22,9 +23,9 @@ function s.initial_effect(c)
 	e3:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CARD_TARGET)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCode(EVENT_TO_DECK)
-	e3:SetCondition(s.condition)
-	e3:SetTarget(s.target)
-	e3:SetOperation(s.operation)
+	e3:SetCondition(s.descon)
+	e3:SetTarget(s.destg)
+	e3:SetOperation(s.desop)
 	c:RegisterEffect(e3)
 end
 	s.material_setcode={SET_DARKLORD}
@@ -40,21 +41,24 @@ end
 function s.splimit(e,se,sp,st)
 	return (st&SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION or e:GetHandler():GetLocation()~=LOCATION_EXTRA 
 end
-function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.spcon(e)
+	return e:GetHandler():GetSummonLocation()&LOCATION_EXTRA==LOCATION_EXTRA
+end
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsPlayerCanDiscardDeck(tp,5) end
 end
-function s.sumfilter(c)
+function s.spfilter(c)
 	return c:IsAbleToHand() and c:IsType(TYPE_SPELL+TYPE_TRAP)
 end
-function s.sumop(e,tp,eg,ep,ev,re,r,rp)
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if not Duel.IsPlayerCanDiscardDeck(tp,5) then return end
 	Duel.ConfirmDecktop(tp,5)
 	local g=Duel.GetDecktopGroup(tp,5)
 	if #g>0 then
 		Duel.DisableShuffleCheck()
-		if g:IsExists(s.sumfilter,1,nil) and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
+		if g:IsExists(s.spfilter,1,nil) and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
 			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-			local sg=g:FilterSelect(tp,s.sumfilter,1,1,nil)
+			local sg=g:FilterSelect(tp,s.spfilter,1,1,nil)
 			Duel.SendtoHand(sg,nil,REASON_EFFECT)
 			Duel.ConfirmCards(1-tp,sg)
 			Duel.ShuffleHand(tp)
@@ -67,16 +71,16 @@ function s.cfilter(c,tp)
 	return c:IsControler(tp) and c:GetPreviousControler()==tp
 		and (c:IsPreviousLocation(LOCATION_GRAVE)) and c:IsSetCard(SET_DARKLORD)
 end
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
 	return (r&REASON_EFFECT)~=0 and eg:IsExists(s.cfilter,1,nil,tp)
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_ONFIELD) end
 	if chk==0 then return Duel.IsExistingTarget(nil,tp,0,LOCATION_ONFIELD,1,nil) end
 	local g=Duel.SelectTarget(tp,nil,tp,0,LOCATION_ONFIELD,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
 end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
 	local tc=Duel.GetFirstTarget()
 		Duel.Destroy(tc,REASON_EFFECT)

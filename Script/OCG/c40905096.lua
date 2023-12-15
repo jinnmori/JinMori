@@ -19,8 +19,8 @@ c:SetSPSummonOnce(id)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e3:SetProperty(EFFECT_FLAG_DELAY)
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e3:SetCondition(s.condition)
-	e3:SetOperation(s.operation)
+	e3:SetCondition(s.spcon1)
+	e3:SetOperation(s.spop1)
 	c:RegisterEffect(e3)
 	--copy effect
 	local e2=Effect.CreateEffect(c)
@@ -46,13 +46,13 @@ function s.spcon(e,c)
 	return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0 and
 		Duel.GetMatchingGroupCount(s.spfilter,c:GetControler(),LOCATION_GRAVE,0,nil)==4
 end
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
+function s.spcon1(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():GetSummonType()==SUMMON_TYPE_SPECIAL+1
 end
 function s.spfilter1(c,e,tp)
 return c:IsRace(RACE_FAIRY) and c:IsAttribute(ATTRIBUTE_DARK) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
+function s.spop1(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(aux.NecroValleyFilter(s.spfilter1),tp,LOCATION_HAND+LOCATION_GRAVE,0,nil,e,tp)
 	if #g>0 and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and Duel.SelectYesNo(tp,aux.Stringid(id,2)) then

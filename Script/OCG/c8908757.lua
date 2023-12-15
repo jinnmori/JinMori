@@ -30,7 +30,7 @@ end
 s.listed_series={SET_DARKLORD}
 s.listed_names={id}
 function s.tagfilter(c,e)
-	return c:IsSetCard(SET_DARKLORD) and c:IsType(TYPE_EFFECT) and c:IsMonster() and c:IsCanBeEffectTarget(e)
+	return c:IsSetCard(SET_DARKLORD) and c:IsType(TYPE_EFFECT) and c:IsMonster() and c:HasLevel() and c:IsCanBeEffectTarget(e)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return s.thfilter(chkc) end
