@@ -45,7 +45,7 @@ function s.initial_effect(c)
 	e5:SetTargetRange(LOCATION_HAND,0)
 	e5:SetCode(EFFECT_EXTRA_SUMMON_COUNT)
 	e5:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,SET_DARKLORD))
-	e1:SetValue(0x1)
+	e5:SetValue(0x1)
 	c:RegisterEffect(e5)
 	end
 s.listed_series={SET_DARKLORD}
