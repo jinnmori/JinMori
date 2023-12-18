@@ -19,6 +19,7 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_QUICK_O)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetRange(LOCATION_GRAVE)
+	e2:SetCondition(s.thcon)
 	e2:SetCost(aux.bfgcost)
 	e2:SetTarget(s.thtg)
 	e2:SetOperation(s.thop)
@@ -55,6 +56,9 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetValue(tc:GetTextAttack()*2)
 		tc:RegisterEffect(e1)
 	end
+end
+function s.thcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsMainPhase()
 end
 function s.thfilter(c)
 	return c:IsSetCard(SET_MEKLORD) and not c:IsCode(id) and c:IsAbleToHand()

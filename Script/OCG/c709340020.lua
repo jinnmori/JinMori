@@ -7,7 +7,7 @@ function s.initial_effect(c)
 	e1:SetCategory(CATEGORY_CONTROL)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
 	e1:SetCountLimit(1,id)
 	e1:SetTarget(s.sumtg)
 	e1:SetOperation(s.sumop)
@@ -29,7 +29,7 @@ function s.filter1(c,tp)
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 local c=e:GetHandler()
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and s.filter1(chkc,tp) end
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) end
 	if chk==0 then return Duel.IsExistingTarget(Card.IsCanBeEffectTarget,tp,0,LOCATION_MZONE,1,nil,e,tp) and
 	Duel.IsExistingMatchingCard(s.filter1,tp,LOCATION_EXTRA,0,1,nil,tp)
 		and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 end
@@ -48,7 +48,7 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetCode(EFFECT_ADD_CODE)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-	e1:SetValue(e:GetLabel())
+	e1:SetValue(cg)
 	tc:RegisterEffect(e1)
  end
 function s.repfilter(c,tp)
