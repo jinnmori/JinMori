@@ -57,7 +57,7 @@ function s.eqcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsMainPhase()
 end
 function s.eqfilter1(c,tp)
-	return c:IsFaceup() and Duel.IsExistingMatchingCard(s.eqfilter2,tp,LOCATION_MZONE,0,1,nil,c,tp)
+	return c:IsFaceup() and c:IsMonster() and Duel.IsExistingMatchingCard(s.eqfilter2,tp,LOCATION_MZONE,0,1,nil,c,tp)
 end
 function s.eqfilter2(c,ec,tp)
 local eff={c:GetCardEffect(89785779)}
