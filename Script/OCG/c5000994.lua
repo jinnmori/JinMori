@@ -176,18 +176,26 @@ function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	end
 		e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,0)
 end
-function s.sumfilter(c,e,tp)
-	return (c:IsCosmic() or c:IsShooting() or c:IsSetCard(SET_STARDUST)) and c:IsType(TYPE_SYNCHRO) and c:IsCanBeSpecialSummoned(e,0,tp,true,true)
+function s.sumfilter(c,e,tp,mmz_chk)
+	if not ((c:IsCosmic() or c:IsShooting() or c:IsSetCard(SET_STARDUST)) and c:IsType(TYPE_SYNCHRO)
+		and c:IsCanBeSpecialSummoned(e,0,tp,true,true)) then return false end
+	if c:IsLocation(LOCATION_GRAVE) then
+		return mmz_chk
+	else
+		return Duel.GetLocationCountFromEx(tp,tp,nil,c)>0
+	end
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
+	local mmz_chk=Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and c:GetFlagEffect(id)>0
-	and Duel.IsExistingMatchingCard(s.sumfilter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,0,0)
+	and Duel.IsExistingMatchingCard(s.sumfilter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,1,nil,e,tp,mmz_chk) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,0,LOCATION_EXTRA+LOCATION_GRAVE)
 end
 function s.sumop(e,tp,eg,ep,ev,re,r,rp)
+	local mmz_chk=Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 	if e:GetHandler():IsRelateToEffect(e) then
-		local sc=Duel.SelectMatchingCard(tp,s.sumfilter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,1,1,nil,e,tp):GetFirst()
+		local sc=Duel.SelectMatchingCard(tp,s.sumfilter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,1,1,nil,e,tp,mmz_chk):GetFirst()
 		if Duel.GetLocationCount(tp,LOCATION_MZONE)==0 then return end
 		Duel.SpecialSummon(sc,0,tp,tp,true,true,POS_FACEUP)
 	end

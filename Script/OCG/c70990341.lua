@@ -90,11 +90,18 @@ function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 end
 function s.spfilter(c,e,tp)
-	return c:IsSetCard(SET_RED_DRAGON_ARCHFIEND) and c:IsLevel(8) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	if not (c:IsSetCard(SET_RED_DRAGON_ARCHFIEND) and c:IsLevel(8)
+		and c:IsCanBeSpecialSummoned(e,0,tp,false,false)) then return false end
+	if c:IsLocation(LOCATION_GRAVE) then
+		return mmz_chk
+	else
+		return Duel.GetLocationCountFromEx(tp,tp,nil,c)>0
+	end
 end
 function s.negop(e,tp,eg,ep,ev,re,r,rp)
+	local mmz_chk=Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 	if Duel.NegateActivation(ev) and re:GetHandler():IsRelateToEffect(re) then
-		local g=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_EXTRA|LOCATION_GRAVE,0,nil,e,tp)
+		local g=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_EXTRA|LOCATION_GRAVE,0,nil,e,tp,mmz_chk)
 		if #g>0 and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 		local sg=g:Select(tp,1,1,nil)

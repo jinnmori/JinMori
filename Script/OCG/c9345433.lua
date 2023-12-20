@@ -28,6 +28,7 @@ function s.initial_effect(c)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
 end
+s.listed_names={50321796}
 function s.tdcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(aux.TRUE,tp,LOCATION_HAND,0,1,nil) end
 	local g=Duel.SelectMatchingCard(tp,aux.TRUE,tp,LOCATION_HAND,0,1,99,nil)
@@ -55,16 +56,23 @@ function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return rp~=tp and e:GetHandler():IsPreviousControler(tp) and c:IsSummonType(SUMMON_TYPE_SYNCHRO)
 end
-function s.spfilter(c,e,tp)
-	return c:IsCode(9345433) and Duel.GetLocationCountFromEx(tp,tp,nil,c)>0 and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+function s.spfilter(c,e,tp,mmz_chk)
+	if not c:IsCode(50321796) and c:IsCanBeSpecialSummoned(e,0,tp,true,true) then return false end
+	if c:IsLocation(LOCATION_GRAVE) then
+		return mmz_chk
+	else
+		return Duel.GetLocationCountFromEx(tp,tp,nil,c)>0
+	end
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_EXTRA,0,1,nil,e,tp) end
+	local mmz_chk=Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	if chk==0 then return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,1,nil,e,tp,mmz_chk) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	local mmz_chk=Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_EXTRA,0,1,1,nil,e,tp)
+	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,1,1,nil,e,tp)
 	if #g>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 		local e1=Effect.CreateEffect(c)
