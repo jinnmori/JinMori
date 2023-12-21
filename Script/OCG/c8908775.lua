@@ -96,7 +96,7 @@ function s.rmop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=Duel.GetFieldGroup(1-tp,LOCATION_MZONE,LOCATION_MZONE)
 	if #g==0 or not c:IsRelateToEffect(e) or not c:IsFaceup() then return end
-	local hg=g:Select(1-tp,1,1,nil)
+	local hg=g:Select(tp,1,1,nil)
 	if #hg~=1 then return end
 	if Duel.Remove(hg,POS_FACEUP,REASON_EFFECT+REASON_TEMPORARY)==0 then return end
 	local retg=c:HasFlagEffect(id) and hg
@@ -119,7 +119,7 @@ end
 function s.retcon(rg,e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsTurnPlayer(tp)
 end
-function s.spfilter(c,e,tp)
+function s.spfilter(c,e,tp,mmz_chk)
 	if not ((c:IsSetCard(SET_CHAOS) and c:IsType(TYPE_SYNCHRO|TYPE_RITUAL)) or (c:IsSetCard(SET_BLACK_LUSTER_SOLDIER))
 		and c:IsCanBeSpecialSummoned(e,0,tp,true,true)) then return false end
 	if c:IsLocation(LOCATION_GRAVE) then
