@@ -43,7 +43,7 @@ function s.thfilter(c)
 end
 function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) and c:IsFaceup() and c:UpdateAttack(-600)==-600 and Duel.Damage(tp,200,REASON_EFFECT) then
+	if c:IsRelateToEffect(e) and c:IsFaceup() and c:UpdateAttack(-600)==-600 and Duel.Damage(1-tp,200,REASON_EFFECT) then
 	Duel.NegateActivation(ev)
 	if c:GetAttack()==0 then
 	local sg=Duel.GetMatchingGroup(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
