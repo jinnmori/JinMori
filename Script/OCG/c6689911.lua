@@ -4,7 +4,7 @@ function s.initial_effect(c)
 	c:EnableReviveLimit()
 	-- Fusion Materials
 	Fusion.AddProcMix(c,true,true,aux.FilterBoolFunctionEx(Card.IsSetCard,SET_HERO),s.ffilter)
-		--search
+	--search
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,1))
 	e1:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.settg)
 	e1:SetOperation(s.setop)
 	c:RegisterEffect(e1)
-		--Negate
+	--Negate
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_NEGATE+CATEGORY_DESTROY)
@@ -21,6 +21,7 @@ function s.initial_effect(c)
 	e2:SetCode(EVENT_CHAINING)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+	e2:SetCountLimit(1)
 	e2:SetCondition(s.negcon)
 	e2:SetCost(s.negcost)
 	e2:SetTarget(s.negtg)
@@ -29,7 +30,7 @@ function s.initial_effect(c)
 end
 s.material_setcode={SET_HERO,SET_NEOS,SET_WINGMAN}
 s.listed_series={SET_FAVORITE}
-
+s.listed_names={CARD_NEOS}
 function s.ffilter(c,fc,sumtype,tp)
 	return c:IsCode(CARD_NEOS) or (c:IsType(TYPE_FUSION,fc,sumtype,tp) and c:IsSetCard(SET_WINGMAN,fc,sumtype,tp))
 end
@@ -52,7 +53,8 @@ end
 function s.negcon(e,tp,eg,ep,ev,re,r,rp)
 	if ep==tp or (not re:IsHasType(EFFECT_TYPE_ACTIVATE) and not re:IsActiveType(TYPE_MONSTER))
 		or (not Duel.IsChainNegatable(ev)) then return false end
-	return rp~=tp and not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and Duel.IsChainNegatable(ev)
+	return rp~=tp and not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) 
+	and Duel.IsChainNegatable(ev) and e:GetHandler():IsSummonType(SUMMON_TYPE_FUSION)
 end
 function s.negfilter(c)
 	return c:IsSetCard(SET_FAVORITE) and c:IsSpellTrap() and (c:IsFaceup() or c:IsLocation(LOCATION_HAND|LOCATION_DECK)) and c:IsAbleToGraveAsCost()
