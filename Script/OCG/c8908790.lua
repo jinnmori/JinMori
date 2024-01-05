@@ -42,7 +42,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
 end
 s.listed_series={SET_GRAVEKEEPERS}
-s.listed_names={id.CARD_NECROVALLEY}
+s.listed_names={id,CARD_NECROVALLEY}
 function s.spfilter(c,e,tp)
 	return c:IsSetCard(SET_GRAVEKEEPERS) and c:IsMonster() and c:IsLevelBelow(6) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEDOWN_DEFENSE)
 end
