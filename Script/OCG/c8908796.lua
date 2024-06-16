@@ -46,7 +46,7 @@ function s.spcon(e,c)
 	end
 	local tp=c:GetControler()
 	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsCode,CARD_PHARAONIC_SARCOPHAGUS),tp,LOCATION_ONFIELD,0,1,nil)
+		and Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsCode,CARD_KING_SARCOPHAGUS),tp,LOCATION_ONFIELD,0,1,nil)
 end
 function s.thcostfilter(c)
 	return c:IsLevel(8) and c:IsMonster() and c:IsAbleToGraveAsCost()
