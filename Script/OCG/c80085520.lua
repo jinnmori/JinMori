@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--Synchro Summon
-	Synchro.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsCode,CARD_DEBRIS_DRAGON),1,1,Synchro.NonTuner(nil),1,99)
+	Synchro.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsCode,14943837),1,1,Synchro.NonTuner(nil),1,99)
 	c:EnableReviveLimit()
 	--Treat as Level 1 to 6 for Synchro Summon
 	local e1=Effect.CreateEffect(c)
@@ -36,7 +36,8 @@ function s.initial_effect(c)
 	e3:SetOperation(s.scop)
 	c:RegisterEffect(e3)
 end
-s.listed_names={CARD_DEBRIS_DRAGON}
+s.material={14943837}
+s.listed_names={14943837}
 s.listed_series={SET_STARDUST}
 
 function s.matop(e,tg,ntg,sg,lv,sc,tp)
