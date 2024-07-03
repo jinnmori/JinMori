@@ -42,7 +42,7 @@ function s.initial_effect(c)
     e3:SetOperation(s.spop)
     c:RegisterEffect(e3)
 end
-s.listed_names={CARD_DARK_MAGICIAN_GIRL}
+s.listed_names={CARD_DARK_MAGICIAN_GIRL,41175645}
 s.listed_series={SET_SILENT_MAGICIAN}
 
 function s.ffilter1(c)
@@ -72,10 +72,12 @@ function s.negcon(e,tp,eg,ep,ev,re,r,rp)
 end
 
 function s.negcost(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return e:GetHandler():GetLevel()>1 end
-    e:GetHandler():UpdateLevel(-1,nil,e:GetHandler())
+    if chk==0 then return e:GetHandler():GetLevel()>=2 end
+    e:GetHandler():UpdateLevel(-4,nil,e:GetHandler())
+	if e:GetHandler():GetLevel()==2 then
+	Duel.Destroy(e:GetHandler(),REASON_EFFECT)
+	end
 end
-
 function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
     Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
@@ -84,13 +86,11 @@ end
 function s.negop(e,tp,eg,ep,ev,re,r,rp)
     Duel.NegateActivation(ev)
 end
-
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
     return e:GetHandler():IsPreviousLocation(LOCATION_MZONE)
 end
-
 function s.spfilter(c,e,tp)
-	return (c:IsCode(CARD_DARK_MAGICIAN_GIRL) or c:IsSetCard(SET_SILENT_MAGICIAN)) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsCode(CARD_DARK_MAGICIAN_GIRL+41175645) and c:IsCanBeSpecialSummoned(e,0,tp,true,true)
 end
 function s.rescon(sg,e,tp,mg)
 	return sg:FilterCount(Card.IsCode,nil,CARD_DARK_MAGICIAN_GIRL)==1
@@ -108,6 +108,6 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if #g==0 then return end
 	local sg=aux.SelectUnselectGroup(g,e,tp,2,2,s.rescon,1,tp,HINTMSG_SPSUMMON)
 	if #sg>0 then
-		Duel.SpecialSummon(sg,0,tp,tp,false,false,POS_FACEUP)
+		Duel.SpecialSummon(sg,0,tp,tp,true,true,POS_FACEUP)
 	end
 end
