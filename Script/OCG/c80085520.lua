@@ -9,7 +9,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
 	e1:SetCode(EFFECT_SYNCHRO_MATERIAL_CUSTOM)
-	e1:SetOperation(s.matop)
+	e1:SetOperation(s.synop)
 	c:RegisterEffect(e1)
 	--Special Summon Stardust monster
 	local e2=Effect.CreateEffect(c)
@@ -40,8 +40,45 @@ s.material={14943837}
 s.listed_names={14943837}
 s.listed_series={SET_STARDUST}
 
-function s.matop(e,tg,ntg,sg,lv,sc,tp)
-	return true,true
+function s.synlevel(c,lc,sc,bool)
+	if c:GetCode()==lc:GetCode() then
+	if bool then
+		return 1
+	else
+		return 2
+	end
+	else 
+		return c:GetSynchroLevel(sc)
+	end
+end
+function s.synlevel2(c,lc,sc,bool)
+	if c:GetCode()==lc:GetCode() then
+	if bool then
+		return 3
+	else
+		return 4
+	end
+	else 
+		return c:GetSynchroLevel(sc)
+	end
+end
+function s.synlevel3(c,lc,sc,bool)
+	if c:GetCode()==lc:GetCode() then
+	if bool then
+		return 5
+	else
+		return 6
+	end
+	else 
+		return c:GetSynchroLevel(sc)
+	end
+end
+function s.synop(e,tg,ntg,sg,lv,sc,tp)
+	local res=sg:CheckWithSumEqual(Card.GetSynchroLevel,lv,#sg,#sg,sc) 
+	or sg:CheckWithSumEqual(s.synlevel,lv,#sg,#sg,e:GetHandler(),sc,true) or sg:CheckWithSumEqual(s.synlevel,lv,#sg,#sg,e:GetHandler(),sc,false) 
+	or sg:CheckWithSumEqual(s.synlevel2,lv,#sg,#sg,e:GetHandler(),sc,true) or sg:CheckWithSumEqual(s.synlevel2,lv,#sg,#sg,e:GetHandler(),sc,false) 
+	or sg:CheckWithSumEqual(s.synlevel3,lv,#sg,#sg,e:GetHandler(),sc,true) or sg:CheckWithSumEqual(s.synlevel3,lv,#sg,#sg,e:GetHandler(),sc,false) 
+	return res,true
 end
 
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
@@ -70,12 +107,15 @@ function s.sccon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()~=tp and (Duel.GetCurrentPhase()==PHASE_MAIN1 or Duel.GetCurrentPhase()==PHASE_MAIN2)
 end
 function s.sctg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsSynchroSummonable,tp,LOCATION_EXTRA,0,1,nil,e:GetHandler()) end
+	local c=e:GetHandler()
+	if chk==0 then return c:GetFlagEffect(id)==0
+		and Duel.IsExistingMatchingCard(Card.IsSynchroSummonable,tp,LOCATION_EXTRA,0,1,nil,e:GetHandler()) end
+	c:RegisterFlagEffect(id,RESET_CHAIN,0,1)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
 end
 function s.scop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if c:GetControler()~=tp or not c:IsRelateToEffect(e) or c:IsFacedown() then return end
+	if c:IsControler(1-tp) or not c:IsRelateToEffect(e) or c:IsFacedown() then return end
 	local g=Duel.GetMatchingGroup(Card.IsSynchroSummonable,tp,LOCATION_EXTRA,0,nil,c)
 	if #g>0 then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
