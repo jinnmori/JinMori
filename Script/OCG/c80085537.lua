@@ -102,6 +102,7 @@ function s.immop(e,tp,eg,ep,ev,re,r,rp)
     if tc:IsRelateToEffect(e) and tc:IsFaceup() then
         local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetDescription(id,0)
+		e1:SetProperty(EFFECT_FLAG_CLIENT_HINT)
         e1:SetType(EFFECT_TYPE_SINGLE)
         e1:SetCode(EFFECT_IMMUNE_EFFECT)
         e1:SetValue(s.efilter)
