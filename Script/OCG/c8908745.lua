@@ -94,28 +94,76 @@ function s.cptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,1,0,0)
 end
 function s.cpop(e,tp,eg,ep,ev,re,r,rp)
-	if not e:GetHandler():IsRelateToEffect(e) then return end
-	local c=e:GetHandler()
-	local te=e:GetLabelObject()
-	if te:GetHandler():IsType(TYPE_QUICKPLAY) then
-	local code=te:GetHandler():GetOriginalCode()
+	 local c=e:GetHandler()
+    if not c:IsRelateToEffect(e) then return end
+    local tc=e:GetLabelObject()
+    if tc then
+	if tc:IsType(TYPE_QUICKPLAY) then
+	local code=tc:GetOriginalCode()
 	c:CopyEffect(code,RESET_EVENT+RESETS_STANDARD-RESET_TURN_SET,1)
-	if not te then return end
-	local op=te:GetOperation()
+	if not tc then return end
+	local op=tc:GetOperation()
 	if op then op(e,tp,eg,ep,ev,re,r,rp) end
 	Duel.SendtoDeck(te:GetHandler(),nil,2,REASON_EFFECT)
 	else
 	local effs={te:GetHandler():GetCardEffect()}
     for _,eff in ipairs(effs) do
-  if eff:IsHasType(EFFECT_TYPE_IGNITION) then
-     local e2=eff:Clone()
-    e2:SetRange(LOCATION_MZONE)
-    e2:SetReset(RESET_EVENT+RESETS_STANDARD)
-    c:RegisterEffect(e2)
+        local effs={tc:GetCardEffect()}
+        for _,eff in ipairs(effs) do
+            if eff:GetCode()~=id then  -- Prevent infinite loop
+                local e1=eff:Clone()
+                e1:SetRange(LOCATION_PZONE)
+                e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+                c:RegisterEffect(e1)
+                if eff:IsHasType(EFFECT_TYPE_FIELD) then
+                    local e2=e1:Clone()
+                    e2:SetType(EFFECT_TYPE_FIELD)
+                    e2:SetCode(eff:GetCode())
+                    e2:SetCondition(s.effcon(eff))
+                    e2:SetTarget(s.efftg(eff))
+                    e2:SetOperation(s.effop(eff))
+                    c:RegisterEffect(e2)
+                elseif eff:IsHasType(EFFECT_TYPE_CONTINUOUS) then
+                    local e3=e1:Clone()
+                    e3:SetType(EFFECT_TYPE_CONTINUOUS)
+                    e3:SetCode(eff:GetCode())
+                    e3:SetCondition(s.effcon(eff))
+                    e3:SetOperation(s.effop(eff))
+                    c:RegisterEffect(e3)
+                elseif eff:IsHasType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_TRIGGER_O) then
+                    local e4=e1:Clone()
+                    e4:SetType(EFFECT_TYPE_FIELD+eff:GetType())
+                    e4:SetCode(eff:GetCode())
+                    e4:SetCondition(s.effcon(eff))
+                    e4:SetTarget(s.efftg(eff))
+                    e4:SetOperation(s.effop(eff))
+                    c:RegisterEffect(e4)
+                end
+            end
+        end
 		break
-		end
-	end
 	Duel.BreakEffect()
 	Duel.SendtoDeck(te:GetHandler(),nil,2,REASON_EFFECT)
+			end
+		end
 	end
+end
+function s.effcon(baseeff)
+    return function(e,tp,eg,ep,ev,re,r,rp)
+        local basecon=baseeff:GetCondition()
+        return not basecon or basecon(e,tp,eg,ep,ev,re,r,rp)
+    end
+end
+function s.efftg(baseeff)
+    return function(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+        local basetg=baseeff:GetTarget()
+        if chk==0 then return not basetg or basetg(e,tp,eg,ep,ev,re,r,rp,chk,chkc) end
+        if basetg then basetg(e,tp,eg,ep,ev,re,r,rp,chk,chkc) end
+    end
+end
+function s.effop(baseeff)
+    return function(e,tp,eg,ep,ev,re,r,rp)
+        local baseop=baseeff:GetOperation()
+        if baseop then baseop(e,tp,eg,ep,ev,re,r,rp) end
+    end
 end
