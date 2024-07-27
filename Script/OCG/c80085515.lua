@@ -9,7 +9,6 @@ function s.initial_effect(c)
     e1:SetRange(LOCATION_MZONE+LOCATION_GRAVE)
     e1:SetValue(CARD_DARK_MAGICIAN)
     c:RegisterEffect(e1)
-    
     --Send to GY to add or Special Summon
     local e2=Effect.CreateEffect(c)
     e2:SetDescription(aux.Stringid(id,0))
@@ -21,12 +20,12 @@ function s.initial_effect(c)
     e2:SetTarget(s.thtg)
     e2:SetOperation(s.thop)
     c:RegisterEffect(e2)
-    
     --Special Summon from GY
     local e3=Effect.CreateEffect(c)
     e3:SetDescription(aux.Stringid(id,1))
     e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
     e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e3:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
     e3:SetCode(EVENT_TO_GRAVE)
     e3:SetRange(LOCATION_GRAVE)
     e3:SetCountLimit(1,{id,1})
@@ -35,9 +34,7 @@ function s.initial_effect(c)
     e3:SetOperation(s.spop)
     c:RegisterEffect(e3)
 end
-
 s.listed_names={CARD_DARK_MAGICIAN}
-
 function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return e:GetHandler():IsDiscardable() end
     Duel.SendtoGrave(e:GetHandler(),REASON_COST+REASON_DISCARD)

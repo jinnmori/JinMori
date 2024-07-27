@@ -44,7 +44,7 @@ function s.initial_effect(c)
     e4:SetOperation(s.spop)
     c:RegisterEffect(e4)
 end
-s.listed_series={SET_NUMBER,SET_NUMBER_C)
+s.listed_series={SET_NUMBER,SET_NUMBER_C}
 function s.drconfilter(c)
 	local m=c:GetMetatable(true)
 	if not m then return false end
