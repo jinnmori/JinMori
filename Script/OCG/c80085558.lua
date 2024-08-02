@@ -60,7 +60,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.xyzcon(e,tp,eg,ep,ev,re,r,rp)
-    return eg:IsContains(e:GetHandler()) or (eg:IsExists(Card.IsSetCard,1,nil,SET_MERMAIL) and eg:IsExists(Card.IsControler,1,nil,tp))
+    return eg:IsContains(e:GetHandler()) or (eg:IsExists(Card.IsSetCard,1,nil,SET_MERMAIL) and eg:IsExists(Card.IsControler,1,nil,tp)) and rp==1-tp
 end
 function s.xyzcon2(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsContains(e:GetHandler()) or (eg:IsExists(Card.IsSetCard,1,nil,SET_MERMAIL) and Duel.GetAttacker():IsControler(1-tp))
@@ -104,8 +104,8 @@ function s.xyzop(e,tp,eg,ep,ev,re,r,rp)
                 if tc:IsRelateToEffect(re) then
                     Duel.ChangeTargetCard(ev,Group.FromCards(sc))
 					end
-                end
-            end
+				end
+			end
         end
     end
 end

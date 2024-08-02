@@ -29,7 +29,7 @@ function s.initial_effect(c)
 end
 s.listed_series={SET_GALAXY_EYES}
 function s.spcfilter(c,tp)
-	return c:IsAbleToGraveAsCost() and c:IsSetCard(SET_GALAXY_EYES) and Duel.GetMZoneCount(tp,c)>0
+	return c:IsAbleToGraveAsCost() and c:IsSetCard(SET_GALAXY_EYES) and c:IsMonster() and Duel.GetMZoneCount(tp,c)>0
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.spcfilter,tp,LOCATION_DECK|LOCATION_EXTRA,0,1,nil,tp) end

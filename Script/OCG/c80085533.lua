@@ -11,6 +11,7 @@ function s.initial_effect(c)
     e1:SetOperation(s.activate)
     c:RegisterEffect(e1)
 end
+s.listed_series={SET_SOLFACHORD}
 function s.filter(c,lv,e,tp)
     return c:IsSetCard(SET_SOLFACHORD) and c:IsType(TYPE_PENDULUM) and c:IsLevel(lv)
         and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
@@ -18,7 +19,7 @@ end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
     local lscale=Duel.GetFieldCard(tp,LOCATION_PZONE,0)
     local rscale=Duel.GetFieldCard(tp,LOCATION_PZONE,1)
-    if chk==0 then return lscale or rscale
+    if chk==0 then return (lscale or rscale)
         and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
         and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,1,nil,lscale:GetLeftScale(),e,tp) end
     Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
