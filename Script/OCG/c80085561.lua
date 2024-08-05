@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
     --link summon
-  	Link.AddProcedure(c,s.linkfilter,2,nil,s.spcheck)
+    Link.AddProcedure(c,s.linkfilter,2,2,s.spcheck)
     c:EnableReviveLimit()
     --can be used as substitute for Fusion Material
     local e1=Effect.CreateEffect(c)
@@ -15,7 +15,7 @@ function s.initial_effect(c)
     e2:SetDescription(aux.Stringid(id,0))
     e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
     e2:SetType(EFFECT_TYPE_IGNITION)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
+    e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e2:SetRange(LOCATION_MZONE)
     e2:SetCountLimit(1,id)
     e2:SetTarget(s.thtg)
@@ -23,27 +23,28 @@ function s.initial_effect(c)
     c:RegisterEffect(e2)
 end
 function s.linkfilter(c,lc,sumtype,tp)
-	return not c:IsType(TYPE_TOKEN,lc,sumtype,tp)
+    return not c:IsType(TYPE_TOKEN,lc,sumtype,tp)
 end
 function s.spcheck(g,lc,tp)
-	return g:CheckSameProperty(Card.GetAttribute,lc,SUMMON_TYPE_LINK,tp) and not g:CheckSameProperty(Card.GetRace,lc,SUMMON_TYPE_LINK,tp)
+    return g:CheckSameProperty(Card.GetAttribute,lc,SUMMON_TYPE_LINK,tp) and not g:CheckSameProperty(Card.GetRace,lc,SUMMON_TYPE_LINK,tp)
 end
 function s.subcon(e)
-    return e:GetHandler():IsLocation(LOCATION_ONFIELD+LOCATION_GRAVE)
+    return true
 end
-function s.thfilter1(c,lg,tp)
-	return c:IsFaceup() and lg:IsContains(c) and Duel.IsExistingMatchingCard(s.thfilter2,tp,LOCATION_DECK,0,1,nil)
+function s.thfilter1(c,lg)
+    return c:IsFaceup() and lg:IsContains(c)
 end
 function s.thfilter2(c)
-    return c:IsNormalSpell() and (c:IsCode(CARD_POLYMERIZATION) or c:ListsCode(CARD_POLYMERIZATION)) and c:IsAbleToHand()
+    return c:GetType()==TYPE_SPELL and c:IsSetCard(SET_FUSION) and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-   local lg=e:GetHandler():GetLinkedGroup()
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.thfilter1(chkc,lg) end
-	if chk==0 then return Duel.IsExistingTarget(s.thfilter1,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil,lg,tp) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
-	Duel.SelectTarget(tp,s.thfilter1,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil,lg,tp)
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+    local lg=e:GetHandler():GetLinkedGroup()
+    if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.thfilter1(chkc,lg) end
+    if chk==0 then return Duel.IsExistingTarget(s.thfilter1,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil,lg)
+        and Duel.IsExistingMatchingCard(s.thfilter2,tp,LOCATION_DECK,0,1,nil) end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
+    Duel.SelectTarget(tp,s.thfilter1,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil,lg)
+    Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
     local tc=Duel.GetFirstTarget()
@@ -71,4 +72,13 @@ function s.damcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.damop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Damage(tp,2000,REASON_EFFECT)
+end
+function s.fmfilter(c,e,tp)
+    return c:IsReason(REASON_FUSION) and c:GetReasonCard():GetMaterial():IsContains(e:GetHandler():GetLinkedGroup():GetFirst())
+end
+function s.fmcon(e,tp,eg,ep,ev,re,r,rp)
+    return eg:IsExists(s.fmfilter,1,nil,e,tp)
+end
+function s.fmop(e,tp,eg,ep,ev,re,r,rp)
+    e:GetHandler():GetLinkedGroup():GetFirst():RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1)
 end
