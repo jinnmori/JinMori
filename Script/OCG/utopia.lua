@@ -1,9 +1,11 @@
 --for additional registers
 REGISTER_FLAG_DWORLD=  9
+REGISTER_FLAG_INFERNITY=  20
 Card.RegisterEffect=(function()
 	local oldf=Card.RegisterEffect
 	local function map_to_effect_code(val)
 		if val==9 then return 67985556 end -- access to Dark World effects that activate when Sent to GY as its discarded
+		if val==20 then return 80085565 end -- access to monster effects that its activation Condtion "No Cards in your Hand"
 		return nil
 	end
 	return function(c,e,forced,...)

@@ -56,9 +56,12 @@ s.synchro_nt_required=1
 function s.matfilter(c,val,scard,sumtype,tp)
 	return c:IsAttribute(ATTRIBUTE_DARK,scard,sumtype,tp) and c:IsType(TYPE_SYNCHRO,scard,sumtype,tp)
 end
+function s.flagfilter(c)
+    return c:IsFaceup() and c:GetFlagEffect(80085565)>0 and not c:IsDisabled()
+end
 function s.effcon(e)
 	local tp=e:GetHandlerPlayer()
-	return Duel.GetFieldGroupCount(tp,LOCATION_HAND,0)==0
+	return Duel.GetFieldGroupCount(tp,LOCATION_HAND,0)==0 or Duel.IsExistingMatchingCard(s.flagfilter,tp,LOCATION_MZONE,0,1,nil)
 end
 function s.efilter(e,re)
 	return re:GetOwner()~=e:GetOwner() and not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED)

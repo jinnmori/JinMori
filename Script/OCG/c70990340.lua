@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetCondition(s.fuscon)
 	e1:SetTarget(Fusion.SummonEffTG(params))
 	e1:SetOperation(Fusion.SummonEffOP(params))
-	c:RegisterEffect(e1)
+	c:RegisterEffect(e1,false,REGISTER_FLAG_DWORLD)
 	--set 1 Spell/trap from opponent's GY
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))

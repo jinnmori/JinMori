@@ -53,11 +53,14 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SendtoHand(tc,nil,REASON_EFFECT)
 	end
 end
+function s.flagfilter(c)
+    return c:IsFaceup() and c:GetFlagEffect(80085565)>0 and not c:IsDisabled()
+end
 function s.negcond(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	return re:GetHandler()~=c and not c:IsStatus(STATUS_BATTLE_DESTROYED)
 	and re:IsActiveType(TYPE_MONSTER) and Duel.IsChainNegatable(ev) 
-	and Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_HAND,0)==0
+	and (Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_HAND,0)==0 or Duel.IsExistingMatchingCard(s.flagfilter,tp,LOCATION_MZONE,0,1,nil))
 end
 function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end

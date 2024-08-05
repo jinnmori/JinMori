@@ -46,6 +46,9 @@ function s.setop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SSet(tp,sg)
 	end
 end
+function s.flagfilter(c)
+    return c:IsFaceup() and c:GetFlagEffect(80085565)>0 and not c:IsDisabled()
+end
 function s.exatcon(e)
-	return Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_HAND,0)==0
+	return Duel.GetFieldGroupCount(e:GetHandlerPlayer(),LOCATION_HAND,0)==0 or Duel.IsExistingMatchingCard(s.flagfilter,tp,LOCATION_MZONE,0,1,nil)
 end

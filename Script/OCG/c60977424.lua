@@ -36,11 +36,9 @@ function s.initial_effect(c)
 end
 s.xyz_number=95
 s.listed_series={SET_GALAXY_EYES}
-
-	function s.ovfilter(c,tp,xyzc)
-	return c:IsFaceup() and c:IsSetCard(SET_GALAXY_EYES,xyzc,SUMMON_TYPE_XYZ,tp) and c:IsType(TYPE_XYZ,xyzc,SUMMON_TYPE_XYZ,tp) 
-	 and not c:IsSummonCode(xyzc,SUMMON_TYPE_XYZ,tp,id)
-end
+function s.ovfilter(c,tp,xyzc)
+	return c:IsFaceup() and c:IsSetCard(SET_GALAXY_EYES,xyzc,SUMMON_TYPE_XYZ,tp) and c:IsType(TYPE_XYZ,xyzc,SUMMON_TYPE_XYZ,tp) and not c:IsSummonCode(xyzc,SUMMON_TYPE_XYZ,tp,id)
+end end
 function s.costfilter(c,lv)
 	return c:IsRace(RACE_DRAGON) and c:IsAbleToGraveAsCost()
 end
