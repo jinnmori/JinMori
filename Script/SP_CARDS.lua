@@ -26,6 +26,7 @@ CARD_REVENDREAD_SLAYER	  = 4388680
 
 --Commonly used counters
 COUNTER_DETERMINATION        = 0x120a
+COUNTER_INFERNO        		 = 0x120b
 
 
 
