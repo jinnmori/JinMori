@@ -1,5 +1,6 @@
 --Slifer the Sky Dragon - God Shield
 Duel.LoadScript("SP_CARDS.lua")
+Duel.LoadScript("DIVINEBEAST.lua")
 local s,id=GetID()
 function s.initial_effect(c)
 	--summon with 3 tribute

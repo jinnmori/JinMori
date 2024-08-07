@@ -36,7 +36,7 @@ function s.effop(e,tp,eg,ep,ev,re,r,rp)
      c:RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD+RESET_DISABLE|RESETS_STANDARD_DISABLE,0,1)
 end
 function s.flagfilter(c)
-    return c:IsFaceup() and c:GetFlagEffect(80085565)>0 and not c:IsDisabled()
+    return c:IsFaceup() and c:GetFlagEffect(80085565)>0
 end
 function s.tgcon(e,tp,eg,ep,ev,re,r,rp)
     return Duel.GetFieldGroupCount(tp,LOCATION_HAND,0)==0 or Duel.IsExistingMatchingCard(s.flagfilter,tp,LOCATION_MZONE,0,1,nil)
