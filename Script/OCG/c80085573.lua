@@ -1,4 +1,4 @@
---Your monster's name here
+--Number C66: Emperor Key Beetle
 local s,id=GetID()
 function s.initial_effect(c)
 	--Xyz Summon
