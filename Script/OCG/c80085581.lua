@@ -28,7 +28,7 @@ end
 s.listed_series={SET_HERO,SET_VISION_HERO}
 s.listed_names={80085581}
 function s.tffilter(c,tp)
-    return c:IsSetCard(SET_HERO) and c:IsType(TYPE_MONSTER) and not c:IsForbidden()
+    return c:IsSetCard(SET_VISION_HERO) and c:IsType(TYPE_MONSTER) and not c:IsForbidden()
 end
 function s.tftg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0

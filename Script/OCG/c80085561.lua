@@ -35,7 +35,7 @@ function s.thfilter1(c,lg)
     return c:IsFaceup() and lg:IsContains(c)
 end
 function s.thfilter2(c)
-    return c:GetType()==TYPE_SPELL and c:IsSetCard(SET_FUSION) and c:IsAbleToHand()
+    return c:GetType()==TYPE_SPELL and c:IsSetCard(SET_FUSION) and c:IsType(TYPE_NORMAL) and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
     local lg=e:GetHandler():GetLinkedGroup()
