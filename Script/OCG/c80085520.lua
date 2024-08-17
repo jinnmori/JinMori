@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--Synchro Summon
-	Synchro.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsCode,14943837),1,1,Synchro.NonTuner(nil),1,99)
+	Synchro.AddProcedure(c,s.tfilter,1,1,Synchro.NonTuner(nil),1,99)
 	c:EnableReviveLimit()
 	--Treat as Level 1 to 6 for Synchro Summon
 	local e1=Effect.CreateEffect(c)
@@ -39,7 +39,9 @@ end
 s.material={14943837}
 s.listed_names={14943837}
 s.listed_series={SET_STARDUST}
-
+function s.tfilter(c,lc,stype,tp)
+	return c:IsSummonCode(lc,stype,tp,14943837)
+end
 function s.synlevel(c,lc,sc,bool)
 	if c:GetCode()==lc:GetCode() then
 	if bool then

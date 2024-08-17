@@ -59,7 +59,7 @@ function s.splimit(e,se,sp,st)
     return false
 end
 function s.spfilter(c,tp)
-    return c:IsLevel(10) and c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_FIEND)
+    return c:IsLevelAbove(10) and c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_FIEND)
         and (c:IsControler(tp) or c:IsFaceup())
 end
 function s.spcon(e,c)

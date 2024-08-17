@@ -9,7 +9,7 @@ function s.initial_effect(c)
 	e1:SetRange(LOCATION_MZONE+LOCATION_GRAVE)
 	e1:SetValue(CARD_DARK_MAGICIAN)
 	c:RegisterEffect(e1)
-	--Search 1 Level 6 or 7 Spellcaster 
+	--Search 1 Level 6 or 7 Spellcaster or Special Summon it
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH+CATEGORY_SPECIAL_SUMMON)
@@ -23,13 +23,13 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 	--Special summon itself from GY
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetDescription(aux.Stringid(id,2))
 	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-	e3:SetProperty(EFFECT_FLAG_DELAY)
+	e3:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
 	e3:SetCode(EVENT_TO_GRAVE)
 	e3:SetRange(LOCATION_GRAVE)
-	e3:SetCountLimit(1,id+1)
+	e3:SetCountLimit(1,{id,1})
 	e3:SetCondition(s.spcon)
 	e3:SetTarget(s.sptg)
 	e3:SetOperation(s.spop)
@@ -42,7 +42,7 @@ function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SendtoGrave(e:GetHandler(),REASON_COST)
 end
 function s.mgfilter(c)
-	return c:IsFacedown() or c:IsFaceup() and c:IsRace(RACE_SPELLCASTER)
+	return c:IsRace(RACE_SPELLCASTER)
 end
 function s.thfilter(c,e,tp,mg,mz)
 	return c:IsMonster() and c:IsRace(RACE_SPELLCASTER) and (c:IsLevel(6) or c:IsLevel(7)) and 
@@ -56,10 +56,9 @@ function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	local mg,mz=Duel.IsExistingMatchingCard(s.mgfilter,tp,LOCATION_MZONE,0,1,nil),Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,2))
 	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil,e,tp,mg,mz)
 	if #g>0 then
-		if mg and mz and Duel.SelectYesNo(tp,aux.Stringid(id,3)) then
+		if mg and mz and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
 			Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 		else
 		Duel.SendtoHand(g,nil,REASON_EFFECT)

@@ -1,10 +1,10 @@
 --Magician Girl of Dark Burning
+Duel.LoadScript("Category.lua")
 local s,id=GetID()
 function s.initial_effect(c)
 	--Set 1 "Eternal Soul"
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetCategory(CATEGORY_ATKCHANGE)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
@@ -22,57 +22,51 @@ function s.initial_effect(c)
 	e3:SetType(EFFECT_TYPE_QUICK_O)
 	e3:SetCode(EVENT_CHAINING)
 	e3:SetRange(LOCATION_MZONE)
-	e3:SetCountLimit(1,id+1)
+	e3:SetCountLimit(1,{id,1})
 	e3:SetCondition(s.remcon)
 	e3:SetTarget(s.remtg)
 	e3:SetOperation(s.remop)
 	c:RegisterEffect(e3)
 end
-s.listed_names={id,48680970,CARD_DARK_MAGICIAN,CARD_DARK_MAGICIAN_GIRL}
-
-function s.setfilter(c)
-	return c:IsCode(48680970) and c:IsSSetable()
-end
-function s.darkgirlchk(tp,self)
-	return Duel.IsExistingMatchingCard(s.contfilter,tp,LOCATION_ONFIELD,0,1,self)
-end
-function s.contfilter(c)
-	return c:IsCode(CARD_DARK_MAGICIAN) or (c:IsRace(RACE_SPELLCASTER) and c:IsLevel(6) and c:IsMonster())
-end
-function s.thfilter(c)
+s.listed_names={CARD_DARK_MAGICIAN,CARD_DARK_MAGICIAN_GIRL,48680970}
+function s.sthfilter(c,mg,tp)
+	if mg then
 	return c:IsCode(CARD_DARK_MAGICIAN) or ((c:ListsCode(CARD_DARK_MAGICIAN) or c:ListsCode(CARD_DARK_MAGICIAN_GIRL)) and c:IsMonster()) and c:IsAbleToHand()
+	else
+	return c:IsCode(48680970) and c:IsSSetable() and Duel.GetLocationCount(tp,LOCATION_SZONE)>0
+	end
+end
+function s.mgfilter(c)
+	return c:IsCode(CARD_DARK_MAGICIAN) or (c:IsRace(RACE_SPELLCASTER) and c:IsLevel(6) and c:IsMonster())
 end
 function s.settg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return (Duel.GetLocationCount(tp,LOCATION_SZONE)>0 and Duel.IsExistingMatchingCard(s.setfilter,tp,LOCATION_DECK,0,1,nil)) or (s.darkgirlchk(tp,c) 
-		and Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil))
+	local mg=Duel.IsExistingMatchingCard(s.mgfilter,tp,LOCATION_MZONE,0,1,c)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.sthfilter,tp,LOCATION_DECK,0,1,nil,mg,tp) end 
+	if Duel.IsExistingMatchingCard(s.sthfilter,tp,LOCATION_DECK,0,1,nil,mg,tp) and mg then
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+	elseif Duel.IsExistingMatchingCard(s.sthfilter,tp,LOCATION_DECK,0,1,nil,mg,tp) and not mg then
+	Duel.SetOperationInfo(0,CATEGORY_SET,nil,1,tp,LOCATION_DECK)
 	end
-	Duel.SetPossibleOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
 end
 function s.setop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local darkcircle=Duel.GetMatchingGroup(s.setfilter,tp,LOCATION_DECK,0,nil)
-	local th=Duel.GetMatchingGroup(s.thfilter,tp,LOCATION_DECK,0,nil)
-	if (#th>0 and s.darkgirlchk(tp,c)) and Duel.GetLocationCount(tp,LOCATION_SZONE)>0 and (s.darkgirlchk(tp,c)) then
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-		local g=th:Select(tp,1,1,nil)
-		if #g>0 then
+	local mg=Duel.IsExistingMatchingCard(s.mgfilter,tp,LOCATION_MZONE,0,1,c)
+	local g=Duel.SelectMatchingCard(tp,s.sthfilter,tp,LOCATION_DECK,0,1,1,nil,mg,tp)
+	if #g>0 then
+		if mg then
 			Duel.SendtoHand(g,nil,REASON_EFFECT)
 			Duel.ConfirmCards(1-tp,g)
-		end
-	elseif #darkcircle>0 then
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SET)
-	local g2=darkcircle:Select(tp,1,1,nil):GetFirst()
-	if g2 and g2:IsSSetable() then
-		Duel.SSet(tp,g2)
+		else
+		Duel.SSet(tp,g)		
 		--Can be activated this turn
-		local e1=Effect.CreateEffect(e:GetHandler())
+		local e1=Effect.CreateEffect(c)
 		e1:SetDescription(aux.Stringid(id,3))
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_TRAP_ACT_IN_SET_TURN)
 		e1:SetProperty(EFFECT_FLAG_SET_AVAILABLE)
 		e1:SetReset(RESET_EVENT|RESETS_STANDARD)
-		g2:RegisterEffect(e1)
+		g:GetFirst():RegisterEffect(e1)
 		end
 	end
 end

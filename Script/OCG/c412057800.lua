@@ -3,6 +3,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--Apply effect depending on the target's name
 	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetCode(EVENT_FREE_CHAIN)
@@ -11,7 +12,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 	--search
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetDescription(aux.Stringid(id,2))
 	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_GRAVE)
@@ -29,8 +30,7 @@ function s.filter(c)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
   if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and s.filter(chkc) end
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingTarget(s.filter,tp,LOCATION_MZONE,0,1,nil) end
+	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_MZONE,0,1,nil) end
 	local tc=Duel.SelectTarget(tp,s.filter,tp,LOCATION_MZONE,0,1,1,nil)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
@@ -44,7 +44,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	tc:RegisterEffect(e2)
 	--check if "Magician girl " is on the field 
 	if tc:IsSetCard(SET_MAGICIAN_GIRL) then
-		local g=Duel.GetMatchingGroup(nil,tp,0,LOCATION_MZONE,c)
+		local g=Duel.GetMatchingGroup(aux.AND(Card.IsType,Card.HasNonZeroAttack),tp,0,LOCATION_MZONE,c,TYPE_EFFECT)
 		for oc in aux.Next(g) do
 			--Negate Thier Effects
 			local e2=Effect.CreateEffect(c)
@@ -65,20 +65,17 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 				oc:RegisterEffect(e4)
 			--Check if Dark magician on the field 
 		elseif tc:IsSetCard(SET_DARK_MAGICIAN) then
-		local p=Duel.GetMatchingGroup(nil,tp,0,LOCATION_MZONE,c)
-		for pc in aux.Next(p) do
 		   --Change ATK to 0
 				local e1=Effect.CreateEffect(c)
 			e1:SetType(EFFECT_TYPE_SINGLE)
 			e1:SetCode(EFFECT_SET_ATTACK_FINAL)
 			e1:SetValue(0)
 			e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-			pc:RegisterEffect(e1)
+			oc:RegisterEffect(e1)
 				end
 			end
 		end
-	end
-end	
+	end	
 function s.thfilter(c)
 	return c:IsCode({CARD_DARK_MAGICIAN,CARD_DARK_MAGICIAN_GIRL}) and c:IsAbleToHand()
 end
