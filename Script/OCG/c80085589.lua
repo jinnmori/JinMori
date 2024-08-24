@@ -135,7 +135,7 @@ function s.spcon2(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():GetFlagEffect(id)>0
 end
 function s.spfilter2(c,e,tp)
-    return c:IsSetCard(SET_ARMED_DRAGON) and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
+    return c:IsSetCard(SET_ARMED_DRAGON) and c:IsMonster() and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
 end
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
