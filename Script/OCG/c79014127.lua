@@ -36,10 +36,7 @@ function s.initial_effect(c)
 end
 s.listed_names={CARD_CFORM}
 function s.val(e,c)
-	return Duel.GetMatchingGroupCount(s.filter,0,0x14,0x14,nil)*500
-end
-function s.filter(c)
-	return c:IsRace(RACE_DRAGON) and (c:IsLocation(LOCATION_GRAVE) or c:IsFaceup())
+	return Duel.GetMatchingGroupCount(Card.IsRace,0,LOCATION_GRAVE+LOCATION_MZONE,LOCATION_GRAVE+LOCATION_MZONE,nil,RACE_DRAGON)*500
 end
 function s.discon(e,tp,eg,ep,ev,re,r,rp)
   return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and re:IsActiveType(TYPE_SPELL+TYPE_TRAP)
@@ -55,18 +52,15 @@ function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetTargetParam(1)
 	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
 	if re:GetHandler():IsDestructable() and re:GetHandler():IsRelateToEffect(re) then
-		Duel.SetOperationInfo(0,CATEGORY_DESTROY,eg,1,0,0)
+		Duel.SetPossibleOperationInfo(0,CATEGORY_DESTROY,eg,1,0,0)
 	end
 end
-function s.filter2(c)
-	return c:IsRace(RACE_DRAGON) and (c:IsLocation(LOCATION_GRAVE) or c:IsFaceup())
-	end
 function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not c:IsFaceup() or not c:IsRelateToEffect(e) then return end
 	if Duel.NegateActivation(ev) and re:GetHandler():IsRelateToEffect(re) then
 	Duel.Destroy(eg,REASON_EFFECT) end
-	if Duel.IsExistingMatchingCard(s.filter,1-tp,LOCATION_GRAVE+LOCATION_MZONE,0,1,nil)and Duel.IsPlayerCanDraw(tp,1) then
+	if Duel.IsExistingMatchingCard(Card.IsRace,1-tp,LOCATION_GRAVE+LOCATION_MZONE,0,1,nil,RACE_DRAGON)and Duel.IsPlayerCanDraw(tp,1) then
 		Duel.BreakEffect()
    Duel.Draw(tp,1,REASON_EFFECT)
   end

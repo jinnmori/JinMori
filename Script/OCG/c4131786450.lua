@@ -20,9 +20,9 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id)
 	e1:SetCode(EVENT_DRAW)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCondition(s.condition)
-	e1:SetTarget(s.target)
-	e1:SetOperation(s.activate)
+	e1:SetCondition(s.drwcon)
+	e1:SetTarget(s.drwtg)
+	e1:SetOperation(s.drwop)
 	c:RegisterEffect(e1)
 	--negate
 	local e2=Effect.CreateEffect(c)
@@ -53,15 +53,15 @@ function s.initial_effect(c)
 	end
 s.listed_series={SET_CHAOS,SET_SILENT_SWORDSMAN}
 s.listed_names={CARD_S_MAGICIAN,CARD_CFORM,id}
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
+function s.drwcon(e,tp,eg,ep,ev,re,r,rp)
 	return ep~=tp and Duel.GetCurrentPhase()~=PHASE_DRAW
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.drwtg(e,tp,eg,ep,ev,re,r,rp,chk)
    if chk==0 then return true end
 	Duel.SetTargetCard(eg)
 	Duel.SetOperationInfo(0,CATEGORY_HANDES,nil,0,1-tp,1)
 end
-function s.activate(e,tp,eg,ep,ev,re,r,rp)
+function s.drwop(e,tp,eg,ep,ev,re,r,rp)
 	local sg=eg:Filter(Card.IsRelateToEffect,nil,e):Filter(Card.IsControler,nil,1-tp)
 	if #sg>0 then
 	local ct=e:GetLabel()
