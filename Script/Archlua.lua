@@ -41,5 +41,10 @@ if not CustomArchetype then
 		35952884,40939228,24696097,24697845,63180841,68431965
 	}
 	Card.IsShooting=MakeCheck({0xfee5},CustomArchetype.OCGShooting)
+	-- "Ultimate Dragon" monster 
+	CustomArchetype.OCGUltimatedragon={
+		3149401,34456900,23995346,43228023,56532353,23998096,100347032,511001816
+	}
+	Card.IsUltimatedragon=MakeCheck(nil,CustomArchetype.OCGUltimatedragon)
 end
 
