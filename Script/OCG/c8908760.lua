@@ -14,7 +14,6 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetCode(EFFECT_SPSUMMON_PROC)
 	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-	e1:SetCountLimit(1)
 	e1:SetRange(LOCATION_HAND+LOCATION_GRAVE)
 	e1:SetCondition(s.spcon)
 	e1:SetTarget(s.sptg)
@@ -27,9 +26,10 @@ function s.initial_effect(c)
 	e3:SetDescription(aux.Stringid(id,0))
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e3:SetCountLimit(1)
+	e3:SetCountLimit(1,id)
 	e3:SetProperty(EFFECT_FLAG_DELAY)
 	e3:SetCondition(s.descon)
+	e3:SetCost(s.descost)
 	e3:SetTarget(s.destg)
 	e3:SetOperation(s.desop)
 	e3:SetLabelObject(e1)
@@ -37,7 +37,7 @@ function s.initial_effect(c)
 	--cannot remove
 	local e7=Effect.CreateEffect(c)
 	e7:SetType(EFFECT_TYPE_SINGLE)
-	e7:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_DELAY)
+	e7:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e7:SetCode(EFFECT_CANNOT_REMOVE)
 	e7:SetRange(LOCATION_MZONE)
 	c:RegisterEffect(e7)
@@ -60,14 +60,11 @@ function s.initial_effect(c)
 	e11:SetCode(EFFECT_DISABLE_EFFECT)
 	c:RegisterEffect(e11)
 	end
-s.listed_names={27564031,id}
+s.listed_names={27564031}
 s.listed_series={SET_MALEFIC}
 function s.tgfilter(c)
-	return c:IsSetCard(SET_MALEFIC) and c:IsAbleToGrave()
+	return c:IsSetCard(SET_MALEFIC) and c:IsAbleToGraveAsCost()
 	end
-function s.filter2(c)
-	return c:IsSetCard(SET_MALEFIC) and c:IsType(TYPE_SPELL+TYPE_TRAP) and c:IsAbleToHand()
-end
 function s.envfilter(c)
 	return c:IsFaceup() and c:IsCode(27564031)
 	end
@@ -104,38 +101,38 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Remove(g,POS_FACEUP,REASON_COST)
 	g:DeleteGroup()
 end
-function s.descon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(Card.IsFaceup,0,LOCATION_FZONE,LOCATION_FZONE,1,nil) and e:GetHandler():GetSummonType()==SUMMON_TYPE_SPECIAL+1
+function s.descost(e,tp,eg,ep,ev,re,r,rp,chk)
+	local g1=Duel.GetMatchingGroup(s.tgfilter,tp,LOCATION_DECK,0,nil)
+	local g2=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
+	if chk==0 then return g1:GetClassCount(Card.GetCode)>=2 and #g2>0 end
+	local sg=aux.SelectUnselectGroup(g1,e,tp,2,2,aux.dncheck,1,tp,HINTMSG_ATOHAND)
+	Duel.SendtoGrave(sg,REASON_COST+REASON_EFFECT)
 end
+function s.descon(e,tp,eg,ep,ev,re,r,rp)		
+	return Duel.IsExistingMatchingCard(Card.IsFaceup,0,LOCATION_FZONE,LOCATION_FZONE,1,nil) and e:GetHandler():GetSummonType()==SUMMON_TYPE_SPECIAL+1
+end                   
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then
-		local g=Duel.GetMatchingGroup(s.tgfilter,tp,LOCATION_DECK,0,nil)
-		return g:GetClassCount(Card.GetCode)>=2
-	end
-	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,#g,2,tp,LOCATION_DECK)
-  Duel.SetPossibleOperationInfo(0,CATEGORY_DESTROY,nil,nil,1-tp,LOCATION_MZONE)
-  Duel.SetPossibleOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
+	local g=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
+	if chk==0 then return #g>0 end
+    Duel.SetPossibleOperationInfo(0,CATEGORY_DESTROY,nil,#g,1-tp,LOCATION_MZONE)
+    Duel.SetPossibleOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
+end
+function s.retfilter(c)
+	return c:IsSetCard(SET_MALEFIC) and c:IsSpellTrap() and c:IsAbleToHand()
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
-    	local g=Duel.GetMatchingGroup(s.tgfilter,tp,LOCATION_DECK,0,nil)
-	if g:GetClassCount(Card.GetCode)>=2 then
-		local sg=aux.SelectUnselectGroup(g,e,tp,2,2,aux.dncheck,1,tp,HINTMSG_ATOHAND)
-		Duel.SendtoGrave(sg,REASON_COST+REASON_EFFECT)
 	local g=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
 	Duel.Destroy(g,REASON_EFFECT)
-		local sg=Duel.GetMatchingGroup(aux.NecroValleyFilter(s.filter2),tp,LOCATION_GRAVE,0,nil,e,tp)
+		local sg=Duel.GetMatchingGroup(aux.NecroValleyFilter(s.retfilter),tp,LOCATION_GRAVE,0,nil,e,tp)
 		if #sg>0 and Duel.IsEnvironment(27564031) and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
 		Duel.BreakEffect()
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 	local g=sg:Select(tp,1,1,nil)
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g) 
-	 	end
-  end
-      end
---end added herer, since closing the function
+	end
+end
 function s.selfcon(e)
 	return not Duel.IsExistingMatchingCard(Card.IsFaceup,0,LOCATION_FZONE,LOCATION_FZONE,1,nil)
-           
 end
         

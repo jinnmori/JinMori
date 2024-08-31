@@ -74,25 +74,22 @@ function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsAbleToRemove() end
 	if chk==0 then
 		if e:GetLabel()==ATTRIBUTE_LIGHT then
-			return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 
-		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_REMOVED,0,1,nil,e,tp)
-		elseif e:GetLabel()==ATTRIBUTE_DARK then
-			return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_MZONE,1,nil)
+		local ct=Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)-Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)
+		local g=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_REMOVED,0,nil,e,tp)
+		local ft=math.min(Duel.GetLocationCount(tp,LOCATION_MZONE),ct,#g)
+		return ft>0 and #g>0
+		else
+			local your_monsters=Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)
+    local opp_monsters=Duel.GetFieldGroupCount(1-tp,LOCATION_MZONE,0)
+    if chk==0 then return opp_monsters>your_monsters and Duel.IsExistingMatchingCard(nil,1-tp,LOCATION_MZONE,0,1,nil) end
+    local diff=opp_monsters-your_monsters
+	 Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_REMOVED)
+	 Duel.SetOperationInfo(0,CATEGORY_REMOVE,nil,diff,1-tp,LOCATION_MZONE)
 		end
 	end
 end
-function s.rmfilter(c)
-	return c:IsMonster()
-end
 function s.rmop(e,tp,eg,ep,ev,re,r,rp)
-	if e:GetLabel()==ATTRIBUTE_DARK then
-		local mg=Duel.GetFieldGroup(1-tp,LOCATION_MZONE,0):Filter(Card.IsAbleToRemove,nil)
-		local gyc=Duel.GetMatchingGroupCount(s.rmfilter,tp,LOCATION_MZONE,0,nil)
-			if gyc==0 then return end
-			Duel.Hint(HINT_SELECTMSG,1-tp,HINTMSG_REMOVE)
-			local bg=mg:Select(1-tp,gyc,gyc,nil)
-			Duel.Remove(bg,POS_FACEUP,REASON_EFFECT)
-		elseif e:GetLabel()==ATTRIBUTE_LIGHT then
+	if e:GetLabel()==ATTRIBUTE_LIGHT then
 	local ct=Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)-Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)
 	local hg=Duel.GetFieldGroup(1-tp,LOCATION_HAND,0):Filter(Card.IsAbleToRemove,nil)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
@@ -103,6 +100,18 @@ function s.rmop(e,tp,eg,ep,ev,re,r,rp)
 	local sg=aux.SelectUnselectGroup(g,e,tp,1,ft,aux.dncheck,1,tp,HINTMSG_SPSUMMON)
 	if #sg>0 then
 		Duel.SpecialSummon(sg,0,tp,tp,false,false,POS_FACEUP)
+		end
+	else
+	local your_monsters=Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)
+    local opp_monsters=Duel.GetFieldGroupCount(1-tp,LOCATION_MZONE,0)
+    if opp_monsters<=your_monsters then return end
+    local diff=opp_monsters-your_monsters
+    local g=Duel.GetFieldGroup(1-tp,LOCATION_MZONE,0)
+    if #g<diff then diff=#g end
+    Duel.Hint(HINT_SELECTMSG,1-tp,HINTMSG_REMOVE)
+    local sg=g:Select(1-tp,diff,diff,nil)
+    if #sg>0 then
+        Duel.Remove(sg,POS_FACEUP,REASON_EFFECT)
 		end
 	end
 end

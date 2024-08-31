@@ -14,8 +14,8 @@ function s.initial_effect(c)
     e2:SetType(EFFECT_TYPE_FIELD)
     e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
     e2:SetRange(LOCATION_MZONE)
-    e2:SetTargetRange(LOCATION_SZONE,0)
-    e2:SetTarget(aux.TargetBoolFunction(Card.IsSpellTrap))
+    e2:SetTargetRange(LOCATION_ONFIELD,0)
+    e2:SetTarget(function(e,_c) return _c:IsSpellTrap() end)
     e2:SetValue(s.indval)
     c:RegisterEffect(e2)
     --Negate Trap and banish
@@ -39,7 +39,7 @@ function s.atkval(e,c)
     return Duel.GetMatchingGroupCount(s.atkfilter,c:GetControler(),LOCATION_GRAVE,LOCATION_GRAVE,nil)*200
 end
 function s.indval(e,re,rp)
-    return rp~=e:GetHandlerPlayer()
+    return e:GetHandler():GetControler()~=tp
 end
 function s.negcon(e,tp,eg,ep,ev,re,r,rp)
     return re:IsActiveType(TYPE_TRAP) and Duel.IsChainNegatable(ev)

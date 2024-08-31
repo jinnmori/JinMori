@@ -132,7 +132,7 @@ function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.NegateActivation(ev)
 end
 function s.thcon(e,tp,eg,ep,ev,re,r,rp)
-	return rp~=tp and re:IsActiveType(TYPE_FUSION) and Duel.IsChainNegatable(ev)
+	return rp~=tp and re:IsActiveType(TYPE_FUSION)
 end
 function s.thfilter(c)
 	return c:GetType()==TYPE_SPELL+TYPE_QUICKPLAY and c:IsAbleToHand()
@@ -169,7 +169,7 @@ function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.remcon(e,tp,eg,ep,ev,re,r,rp)
-	return rp~=tp and re:IsActiveType(TYPE_XYZ) and Duel.IsChainNegatable(ev)
+	return rp~=tp and re:IsActiveType(TYPE_XYZ)
 end
 function s.remtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
@@ -201,7 +201,7 @@ function s.spfilter1(c,e,tp)
 	return c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.spcon1(e,tp,eg,ep,ev,re,r,rp)
-	return rp~=tp and re:IsActiveType(TYPE_LINK) and Duel.IsChainNegatable(ev)
+	return rp~=tp and re:IsActiveType(TYPE_LINK)
 end
 function s.sptg1(e,tp,eg,ep,ev,re,r,rp,chk)
 if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and 

@@ -48,17 +48,17 @@ s.listed_series={SET_PHANTOM_KNIGHTS,SET_THE_PHANTOM_KNIGHTS}
 function s.atktg(e,c)
     return e:GetHandler():GetLinkedGroup():IsContains(c) and c:IsRace(RACE_WARRIOR)
 end
-function s.gyconfilter(c)
-	return c:IsSetCard(SET_THE_PHANTOM_KNIGHTS) and c:IsType(TYPE_XYZ) 
+function s.gyconfilter(c,tp)
+	return c:IsSetCard(SET_THE_PHANTOM_KNIGHTS) and c:IsType(TYPE_XYZ) and c:IsPreviousControler(tp)
 end
-function s.gyconfilter2(c)
-	return c:IsSetCard(SET_PHANTOM_KNIGHTS) and c:IsSpellTrap() 
+function s.gyconfilter2(c,tp)
+	return c:IsSetCard(SET_PHANTOM_KNIGHTS) and c:IsSpellTrap() and c:IsPreviousControler(tp)
 end
 function s.gycon1(e,tp,eg,ep,ev,re,r,rp)
-    return eg:IsExists(s.gyconfilter,1,nil)
+    return eg:IsExists(s.gyconfilter,1,nil,tp)
 end
 function s.gycon2(e,tp,eg,ep,ev,re,r,rp)
-    return eg:IsExists(gyconfilter2,1,nil)
+    return eg:IsExists(gyconfilter2,1,nil,tp)
 end
 function s.gytg(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return Duel.GetFieldGroupCount(tp,0,LOCATION_ONFIELD)>0 end

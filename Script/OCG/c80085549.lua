@@ -59,22 +59,22 @@ function s.spfilter(c)
     return c:IsFaceup() and c:IsSetCard(SET_DARK_CONTRACT) and c:IsAbleToGraveAsCost()
 end
 function s.spcon(e,c)
-    if c==nil then return true end
-    local tp=c:GetControler()
-    local g=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_ONFIELD,0,nil)
-    return #g>=3 and Duel.GetLocationCountFromEx(tp,tp,g,c)>0 and c:IsFaceup()
+   if c==nil then return true end
+	local tp=e:GetHandlerPlayer()
+	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_ONFIELD,0,nil)
+	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and #rg>2 and aux.SelectUnselectGroup(rg,e,tp,3,3,nil,0)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk,c)
-    local g=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_ONFIELD,0,nil)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-    local sg=g:Select(tp,3,3,nil)
-    if sg then
-        sg:KeepAlive()
-        e:SetLabelObject(sg)
-        return true
-    else
-        return false
-    end
+   local c=e:GetHandler()
+	local g=nil
+	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_ONFIELD,0,nil)
+	local g=aux.SelectUnselectGroup(rg,e,tp,3,3,nil,1,tp,HINTMSG_TOGRAVE,nil,nil,true)
+	if #g>0 then
+		g:KeepAlive()
+		e:SetLabelObject(g)
+		return true
+	end
+	return false
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     local sg=e:GetLabelObject()
@@ -97,11 +97,11 @@ function s.disop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Destroy(eg,REASON_EFFECT)
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.filter(chkc) end
-    if chk==0 then return Duel.IsExistingTarget(aux.FaceupFilter(Card.IsSetCard,SET_DD),tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) end
+    if chk==0 then return Duel.IsExistingTarget(aux.FaceupFilter(Card.IsSetCard,SET_DD),tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-	local g=Duel.SelectTarget(tp,aux.FaceupFilter(Card.IsSetCard,SET_DD),tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
-    Duel.SetOperationInfo(0,CATEGORY_DESTROY,nil,1,tp,LOCATION_MZONE)
+	local g=Duel.SelectTarget(tp,aux.FaceupFilter(Card.IsSetCard,SET_DD),tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
+    Duel.SetOperationInfo(0,CATEGORY_DESTROY,nil,1,tp,LOCATION_ONFIELD)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
     local tc=Duel.GetFirstTarget()
@@ -127,7 +127,6 @@ function s.thfilter1(c)
 	local table1000={44539080,45974017,46372010,73360025,9030160,9765723,37209439}
     return c:IsSetCard(SET_DARK_CONTRACT) and c:IsCode(table1000) and c:IsAbleToHand()
 end
-
 function s.thfilter2(c)
 	local table2000={10833828,60168186}
     return c:IsSetCard(SET_DARK_CONTRACT) and c:IsCode(table2000) and c:IsAbleToHand()

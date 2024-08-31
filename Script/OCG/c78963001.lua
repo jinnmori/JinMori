@@ -1,5 +1,5 @@
 --Blue-Eyes Shining Nova Dragon
-Duel.LoadScript("Archetypes.lua")
+Duel.LoadScript("Archlua.lua")
 local s,id=GetID()
 function s.initial_effect(c)
 c:SetUniqueOnField(1,1,id)
@@ -28,7 +28,7 @@ c:EnableReviveLimit()
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetValue(s.val)
 	c:RegisterEffect(e2)
-		--cannot release
+	--cannot release
 	local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_SINGLE)
 	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -61,56 +61,51 @@ c:EnableReviveLimit()
 	e6:SetOperation(s.disop)
 	c:RegisterEffect(e6)
 end
-s.listed_series={SET_ULTIMATE_DRAGON,SET_BLUE_EYES}
-
-function s.spfilter1(c)
-	return c:IsFaceup() and c:IsSetCard(SET_ULTIMATE_DRAGON) and c:IsSummonType(SUMMON_TYPE_FUSION) and c:IsReleasable()
+s.listed_series={SET_BLUE_EYES}
+function s.ultimatedragonfilter(c)
+	return c:IsFaceup() and c:IsUltimatedragon() and c:IsSummonType(SUMMON_TYPE_FUSION) and c:IsReleasable()
 end
-function s.spfilter2(c)
+function s.blueeyesfilter(c)
 	return c:IsSetCard(SET_BLUE_EYES) and c:IsMonster() and c:IsAbleToRemoveAsCost()
 end
-function s.rescon(sg,e,tp,mg)
-	return aux.ChkfMMZ(1)(sg,e,tp,mg) and sg:IsExists(s.chk,1,nil,sg,tp)
-end
-function s.chk(c,sg,tp)
-	return s.spfilter1(c,tp) and sg:IsExists(s.spfilter2,1,c)
-end
 function s.spcon(e,c)
-	if c==nil then return true end
-	local c=e:GetHandler()
-	local tp=e:GetHandlerPlayer()
-	local g1=Duel.GetMatchingGroup(s.spfilter1,tp,LOCATION_MZONE,0,c)
-	local g2=Duel.GetMatchingGroup(s.spfilter2,tp,LOCATION_GRAVE,0,c)
-	local g=g1:Clone()
-	g:Merge(g2)
-	return #g1>0 and #g2>0 and aux.SelectUnselectGroup(g,e,tp,2,2,s.rescon,0)
+    if c==nil then return true end
+    local tp=c:GetControler()
+    local g1=Duel.GetMatchingGroup(s.ultimatedragonfilter,tp,LOCATION_MZONE,0,nil)
+    local g2=Duel.GetMatchingGroup(s.blueeyesfilter,tp,LOCATION_GRAVE,0,nil)
+    return #g1>0 and #g2>0 and Duel.GetLocationCount(tp,LOCATION_MZONE)>-1
+end
+function s.rescon(sg,e,tp,mg)
+    return sg:FilterCount(s.ultimatedragonfilter,nil)==1
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local c=e:GetHandler()
-		local g1=Duel.GetMatchingGroup(s.spfilter1,tp,LOCATION_MZONE,0,c)
-	local g2=Duel.GetMatchingGroup(s.spfilter2,tp,LOCATION_GRAVE,0,c)
-	g1:Merge(g2)
-	local g=aux.SelectUnselectGroup(g1,e,tp,2,2,s.rescon,1,tp,HINTMSG_TOGRAVE)
-	if #g>0 then
-		g:KeepAlive()
-		e:SetLabelObject(g)
-		return true
-	end
-	return false
+    local g1=Duel.GetMatchingGroup(s.ultimatedragonfilter,tp,LOCATION_MZONE,0,nil)
+    local g2=Duel.GetMatchingGroup(s.blueeyesfilter,tp,LOCATION_GRAVE,0,nil)
+    local g=aux.SelectUnselectGroup(g1+g2,e,tp,2,2,s.rescon,1,tp,HINTMSG_REMOVE,nil,nil,true)
+    if #g>0 then
+        g:KeepAlive()
+        e:SetLabelObject(g)
+        return true
+    end
+    return false
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
     local g=e:GetLabelObject()
     if not g then return end
-    local ud=g:Filter(s.spfilter1,nil):GetFirst()
-    g:RemoveCard(ud)
-    Duel.Remove(g,POS_FACEUP,REASON_COST)
-    Duel.Release(ud,REASON_COST)
+    local tc1,tc2=g:GetFirst(),g:GetNext()
+    if tc1 and tc2 then
+        if tc1:IsLocation(LOCATION_MZONE) then
+            Duel.Release(tc1,REASON_COST)
+            Duel.Remove(tc2,POS_FACEUP,REASON_COST)
+        else
+            Duel.Release(tc2,REASON_COST)
+            Duel.Remove(tc1,POS_FACEUP,REASON_COST)
+        end
+    end
+    g:DeleteGroup()
 end
 function s.val(e,c)
-	return Duel.GetMatchingGroupCount(s.atkfilter,0,0x14,0x14,nil)*300
-end
-function s.atkfilter(c)
-	return c:IsRace(RACE_DRAGON) and c:IsLocation(LOCATION_GRAVE)
+	return Duel.GetMatchingGroupCount(Card.IsRace,0,LOCATION_GRAVE,LOCATION_GRAVE,nil,RACE_DRAGON)*300
 end
 function s.discon(e,tp,eg,ep,ev,re,r,rp)
 	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and Duel.IsChainNegatable(ev)

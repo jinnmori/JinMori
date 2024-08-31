@@ -49,74 +49,34 @@ function s.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
     e:SetLabelObject(tc)
     Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,g,1,0,0)
 end
+function s.isPendulumEffect(eff)
+    local range=eff:GetRange()
+    return (range&LOCATION_PZONE)~=0
+end
 function s.penop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     if not c:IsRelateToEffect(e) then return end
     local tc=e:GetLabelObject()
     if tc and tc:IsLocation(LOCATION_GRAVE) then
-        local effs={tc:GetCardEffect()}
-        for _,eff in ipairs(effs) do
-            if eff:GetCode()~=id then -- Prevent infinite loop
-                local e1=eff:Clone()
-                e1:SetRange(LOCATION_PZONE)
-                e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-                c:RegisterEffect(e1)
-                if eff:IsHasType(EFFECT_TYPE_FIELD) then
-                    local e2=e1:Clone()
-                    e2:SetType(EFFECT_TYPE_FIELD)
-                    e2:SetCode(eff:GetCode())
-                    e2:SetCondition(s.effcon(eff))
-                    e2:SetTarget(s.efftg(eff))
-                    e2:SetOperation(s.effop(eff))
-                    c:RegisterEffect(e2)
-                elseif eff:IsHasType(EFFECT_TYPE_CONTINUOUS) then
-                    local e3=e1:Clone()
-                    e3:SetType(EFFECT_TYPE_CONTINUOUS)
-                    e3:SetCode(eff:GetCode())
-                    e3:SetCondition(s.effcon(eff))
-                    e3:SetOperation(s.effop(eff))
-                    c:RegisterEffect(e3)
-                elseif eff:IsHasType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_TRIGGER_O) then
-                    local e4=e1:Clone()
-                    e4:SetType(EFFECT_TYPE_FIELD+eff:GetType())
-                    e4:SetCode(eff:GetCode())
-                    e4:SetCondition(s.effcon(eff))
-                    e4:SetTarget(s.efftg(eff))
-                    e4:SetOperation(s.effop(eff))
-                    c:RegisterEffect(e4)
+      local effs={tc:GetCardEffect()}
+      for _,eff in ipairs(effs) do
+       if s.isPendulumEffect(eff) and eff:GetCode()~=id then -- Check if it's a Pendulum effect and prevent infinite loop
+            local e1=eff:Clone()
+            e1:SetRange(LOCATION_PZONE)
+            e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+            c:RegisterEffect(e1)
                 end
             end
+            --Change Code Name
+            local e2=Effect.CreateEffect(c)
+            e2:SetType(EFFECT_TYPE_SINGLE)
+            e2:SetCode(EFFECT_CHANGE_CODE)
+            e2:SetValue(tc:GetCode())
+            e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+            c:RegisterEffect(e2)
+            Duel.Damage(tp,1500,REASON_EFFECT)
         end
-        --Change Code Name
-        local e5=Effect.CreateEffect(c)
-        e5:SetType(EFFECT_TYPE_SINGLE)
-        e5:SetCode(EFFECT_CHANGE_CODE)
-        e5:SetValue(tc:GetCode())
-        e5:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-        c:RegisterEffect(e5)
-        Duel.Damage(tp,1500,REASON_EFFECT)
     end
-end
-function s.effcon(baseeff)
-    return function(e,tp,eg,ep,ev,re,r,rp)
-        local basecon=baseeff:GetCondition()
-        return not basecon or basecon(e,tp,eg,ep,ev,re,r,rp)
-    end
-end
-function s.efftg(baseeff)
-    return function(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-        local basetg=baseeff:GetTarget()
-        if chk==0 then return not basetg or basetg(e,tp,eg,ep,ev,re,r,rp,chk,chkc) end
-        if basetg then basetg(e,tp,eg,ep,ev,re,r,rp,chk,chkc) end
-    end
-end
-function s.effop(baseeff)
-    return function(e,tp,eg,ep,ev,re,r,rp)
-        local baseop=baseeff:GetOperation()
-        if baseop then baseop(e,tp,eg,ep,ev,re,r,rp) end
-    end
-end
---Monster Effect functions (unchanged)
 function s.damcon(e)
     local tp=e:GetHandlerPlayer()
     return Duel.GetFlagEffect(tp,id)==0

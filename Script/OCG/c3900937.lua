@@ -67,51 +67,55 @@ function s.spfilter2(c,e,tp)
 end
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(s.spfilter2,tp,LOCATION_DECK+LOCATION_HAND,0,1,nil,e,tp) end
+		and Duel.IsExistingMatchingCard(s.spfilter2,tp,LOCATION_DECK+LOCATION_HAND,0,1,nil,e,tp) and e:GetHandler():GetAttack()>=1000 end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,0,0)
 end
 function s.spop2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and c:GetAttack()>=1000 then
-	--Make this card lose 1000 Atk to activate 
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_SINGLE)
-	e0:SetProperty(EFFECT_FLAG_COPY_INHERIT)
-	e0:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
-	e0:SetCode(EFFECT_UPDATE_ATTACK)
-	e0:SetValue(-1000)
-	c:RegisterEffect(e0)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,s.spfilter2,tp,LOCATION_DECK+LOCATION_HAND,0,1,1,nil,e,tp)
-	if #g>0 then
-	if Duel.SpecialSummon(g,0,tp,tp,true,false,POS_FACEUP)>0 then
-		local e1=Effect.CreateEffect(c)
-			e1:SetType(EFFECT_TYPE_FIELD)
-			e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CLIENT_HINT)
-			e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
-			e1:SetReset(RESET_PHASE+PHASE_END)
-			e1:SetDescription(aux.Stringid(id,2))
-			e1:SetTargetRange(1,0)
-			e1:SetTarget(s.splimit)
-			Duel.RegisterEffect(e1,tp)
-		--Limit attacks for the rest of the turn
-			local e2=Effect.CreateEffect(c)
-			e2:SetType(EFFECT_TYPE_FIELD)
-			e2:SetCode(EFFECT_CANNOT_ATTACK)
-			e2:SetTargetRange(LOCATION_MZONE,0)
-			e2:SetLabelObject(g:GetFirst())
-			e2:SetTarget(s.atktg)
-			e2:SetReset(RESET_PHASE+PHASE_END)
-			Duel.RegisterEffect(e2,tp)
-			--lizard check
-aux.addTempLizardCheck(e:GetHandler(),tp)
-				end
+		--Make this card lose 1000 Atk to activate 
+		local e0=Effect.CreateEffect(c)
+		e0:SetType(EFFECT_TYPE_SINGLE)
+		e0:SetProperty(EFFECT_FLAG_COPY_INHERIT)
+		e0:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
+		e0:SetCode(EFFECT_UPDATE_ATTACK)
+		e0:SetValue(-1000)
+		c:RegisterEffect(e0)
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+		local g=Duel.SelectMatchingCard(tp,s.spfilter2,tp,LOCATION_DECK+LOCATION_HAND,0,1,1,nil,e,tp)
+		if #g>0 then
+			local tc=g:GetFirst()
+			if Duel.SpecialSummon(g,0,tp,tp,true,false,POS_FACEUP)>0 then
+				--Cannot Special Summon from Extra Deck
+				local e1=Effect.CreateEffect(c)
+				e1:SetType(EFFECT_TYPE_FIELD)
+				e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CLIENT_HINT)
+				e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+				e1:SetReset(RESET_PHASE+PHASE_END)
+				e1:SetDescription(aux.Stringid(id,2))
+				e1:SetTargetRange(1,0)
+				e1:SetTarget(s.splimit)
+				Duel.RegisterEffect(e1,tp)
+				--Mark the summoned monster with the current turn count
+				tc:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD,0,1,Duel.GetTurnCount())
+				--Can only attack with monsters Summoned by this effect this turn
+				local e2=Effect.CreateEffect(c)
+				e2:SetType(EFFECT_TYPE_FIELD)
+				e2:SetCode(EFFECT_CANNOT_ATTACK)
+				e2:SetTargetRange(LOCATION_MZONE,0)
+				e2:SetTarget(s.atktg)
+				e2:SetReset(RESET_PHASE+PHASE_END)
+				Duel.RegisterEffect(e2,tp)
+				--lizard check
+				aux.addTempLizardCheck(e:GetHandler(),tp)
 			end
 		end
 	end
+end
 function s.splimit(e,c)
 	return c:IsLocation(LOCATION_EXTRA)
 end
+
 function s.atktg(e,c)
-	return e:GetLabelObject()~=c
+	return c:GetFlagEffectLabel(id)~=Duel.GetTurnCount()
 end

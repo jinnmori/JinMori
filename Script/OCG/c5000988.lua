@@ -40,10 +40,11 @@ s.listed_names={CARD_OBELISK_TORMENTOR,id}
 function s.ntcon(e,c)
 	if c==nil then return true end
 	local _,max=c:GetTributeRequirement()
-	return max>0 and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0 and Duel.GetFieldGroupCount(c:GetControler(),0,LOCATION_MZONE)>2 
+	return max>0 and Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0 and Duel.GetFieldGroupCount(c:GetControler(),0,LOCATION_MZONE)>=3 
 end
 function s.tktg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>1 
+	and Duel.IsPlayerCanSpecialSummonMonster(tp,5000989,0,TYPES_TOKEN,0,0,1,RACE_FAIRY,ATTRIBUTE_DARK) end
 	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,2,tp,0)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,2,tp,0)
 end
@@ -93,30 +94,38 @@ function s.thfilter(c)
 	return c:ListsCode(CARD_OBELISK_TORMENTOR) and not c:IsCode(id) and c:IsAbleToHand() 
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
-		if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-		local sc=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_HAND|LOCATION_DECK,0,1,1,nil,e,tp):GetFirst()
-	if sc and Duel.SpecialSummon(sc,0,tp,tp,false,false,POS_FACEUP)>0 then
-	sc:CompleteProcedure()
-	local g2=Duel.GetMatchingGroup(s.thfilter,tp,LOCATION_DECK,0,nil)
-		if #g2>0 and Duel.SelectYesNo(tp,aux.Stringid(id,2)) then
-		Duel.BreakEffect()
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-		local sg=g2:Select(tp,1,1,nil)
-		Duel.SendtoHand(sg,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,sg)
-	end
-		sc:RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD,0,1)
-		local ObeliskEffType=EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F
-		local effs={sc:GetCardEffect()}
-			if not effs then return false end
-			for _, eff in ipairs(effs) do
-			if (eff:GetType()&ObeliskEffType)>0 then
-				eff:SetCondition(aux.AND(s.obeliskcon,eff:GetCondition()))
-			end
-		end
-	end
+    if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+    local sc=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_HAND|LOCATION_DECK,0,1,1,nil,e,tp):GetFirst()
+    if sc and Duel.SpecialSummon(sc,0,tp,tp,false,false,POS_FACEUP)>0 then
+        sc:CompleteProcedure()
+        local g2=Duel.GetMatchingGroup(s.thfilter,tp,LOCATION_DECK,0,nil)
+        if #g2>0 and Duel.SelectYesNo(tp,aux.Stringid(id,2)) then
+            Duel.BreakEffect()
+            Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+            local sg=g2:Select(tp,1,1,nil)
+            Duel.SendtoHand(sg,nil,REASON_EFFECT)
+            Duel.ConfirmCards(1-tp,sg)
+        end
+        sc:RegisterFlagEffect(id,RESET_EVENT|RESETS_STANDARD,0,1)
+        -- Modify Obelisk's effects
+        local effs={sc:GetCardEffect()}
+        if effs then
+            for _, eff in ipairs(effs) do
+                -- Modify the end phase self-destruction effect
+                if (eff:GetType() & (EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)) > 0 
+                   and eff:GetCode() == EVENT_PHASE+PHASE_END then
+                    eff:SetCondition(aux.AND(s.obeliskcon,eff:GetCondition()))
+                end
+                -- Modify the monster destruction effect
+                if eff:GetType() == EFFECT_TYPE_IGNITION 
+                   and eff:GetDescription() == 1100 then -- Assuming 1100 is the effect ID for Obelisk's destruction effect
+                    eff:SetCondition(aux.AND(s.obeliskcon,eff:GetCondition()))
+                end
+            end
+        end
+    end
 end
 function s.obeliskcon(e,tp,eg,ep,ev,re,r,rp)
-	return not e:GetHandler():HasFlagEffect(id)
+    return not e:GetHandler():HasFlagEffect(id)
 end

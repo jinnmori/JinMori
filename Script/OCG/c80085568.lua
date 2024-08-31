@@ -58,29 +58,39 @@ end
 function s.splimit(e,se,sp,st)
     return false
 end
-function s.spfilter(c,tp)
-    return c:IsLevelAbove(10) and c:IsAttribute(ATTRIBUTE_DARK) and c:IsRace(RACE_FIEND)
-        and (c:IsControler(tp) or c:IsFaceup())
+function s.spfilter(c,ft,tp)
+   	return c:IsRace(RACE_FIEND) and c:IsLevelAbove(10) and c:IsReleasable() and (ft>0 or (c:GetSequence()<5 and c:IsControler(tp))) and (c:IsFaceup() or c:IsControler(tp))
 end
 function s.spcon(e,c)
-    if c==nil then return true end
-    local tp=c:GetControler()
-    return Duel.CheckReleaseGroup(tp,s.spfilter,1,false,1,true,c,tp,nil,false,nil,tp)
+   if c==nil then return true end
+	local eff={c:GetCardEffect(EFFECT_NECRO_VALLEY)}
+	for _,te in ipairs(eff) do
+		local op=te:GetOperation()
+		if not op or op(e,c) then return false end
+	end
+	local tp=c:GetControler()
+	local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
+	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_MZONE,LOCATION_MZONE,nil,ft,tp)
+	return ft>-1 and #rg>0 and aux.SelectUnselectGroup(rg,e,tp,1,1,nil,0)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-    local g=Duel.SelectReleaseGroup(tp,s.spfilter,1,1,false,true,true,c,nil,nil,false,nil,tp)
-    if g then
-        g:KeepAlive()
-        e:SetLabelObject(g)
-        return true
-    end
-    return false
+    local c=e:GetHandler()
+	local g=nil
+	local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
+	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_MZONE,LOCATION_MZONE,nil,ft,tp)
+	local g=aux.SelectUnselectGroup(rg,e,tp,1,1,nil,1,tp,HINTMSG_RELEASE,nil,nil,true)
+	if #g>0 then
+		g:KeepAlive()
+		e:SetLabelObject(g)
+		return true
+	end
+	return false
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
-    local g=e:GetLabelObject()
-    if not g then return end
-    Duel.Release(g,REASON_COST)
-    g:DeleteGroup()
+   local g=e:GetLabelObject()
+	if not g then return end
+	Duel.Release(g,REASON_COST)
+	g:DeleteGroup()
 end
 function s.damcon(e,tp,eg,ep,ev,re,r,rp)
     return Duel.GetAttackTarget()~=nil
