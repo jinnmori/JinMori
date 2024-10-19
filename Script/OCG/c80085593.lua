@@ -1,100 +1,101 @@
---Arcana Force X - The Wheel of Fortune
-Duel.LoadScript("Coin.lua")
+--Rev of Destiny
 local s,id=GetID()
 function s.initial_effect(c)
-	--Link Summon
-	c:EnableReviveLimit()
-	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_FAIRY),2,2,s.lcheck)
-	--Coin toss effect on Summon
+	--Activate
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetCategory(CATEGORY_COIN+CATEGORY_TOGRAVE)
-	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e1:SetCondition(s.condition)
-	e1:SetTarget(s.cointg)
-	e1:SetOperation(s.coinop)
+	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH+CATEGORY_TOGRAVE)
+	e1:SetType(EFFECT_TYPE_ACTIVATE)
+	e1:SetCode(EVENT_FREE_CHAIN)
+	e1:SetCost(s.cost)
+	e1:SetTarget(s.target)
+	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
-	--Banish from GY to treat coin tosses as heads
+	--Shuffle itself into the deck when a "Stardust" or "Warrior" Synchro Monster is destroyed
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_QUICK_O)
-	e2:SetCode(EVENT_CHAINING)
+	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e2:SetCode(EVENT_DESTROYED)
+	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
 	e2:SetRange(LOCATION_GRAVE)
-	e2:SetCondition(s.bancon)
-	e2:SetCost(aux.bfgcost)
-	e2:SetOperation(s.banop)
+	e2:SetCondition(s.shcon)
+	e2:SetTarget(s.shtg)
+	e2:SetOperation(s.shop)
 	c:RegisterEffect(e2)
+	--OPT check
+	Duel.AddCustomActivityCounter(id,ACTIVITY_CHAIN,s.chainfilter)
 end
-s.toss_coin=true
-function s.lcheck(g,lc,sumtype,tp)
-	return g:IsExists(Card.IsSetCard,1,nil,0x5,lc,sumtype,tp)
+s.listed_series={SET_SYNCHRON,SET_JUNK,SET_STARDUST,SET_WARRIOR}
+function s.chainfilter(re,tp,cid)
+	return not re:GetHandler():IsCode(id)
 end
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)
-end
-function s.cointg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_COIN,nil,0,tp,1)
-end
-function s.tgfilter(c)
-	return c.toss_coin and c:IsAbleToGrave()
-end
-function s.coinop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if not c:IsRelateToEffect(e) then return end
-	local res=Duel.TossCoin(tp,1)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-	local g=Duel.SelectMatchingCard(tp,s.tgfilter,tp,LOCATION_HAND+LOCATION_DECK,0,1,1,nil)
-	if #g>0 and Duel.SendtoGrave(g,REASON_EFFECT)>0 then
-		local tc=g:GetFirst()
-		local coinResult = (res == 1) and CoinEffects.COIN_HEADS or CoinEffects.COIN_TAILS
-		local targetCard = (coinResult == CoinEffects.COIN_HEADS) and c or Duel.SelectMatchingCard(tp,Card.IsFaceup,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil):GetFirst()
-		if targetCard then
-			CoinEffects.registerEffect(tc:GetOriginalCode(), coinResult, function(e,tp,eg,ep,ev,re,r,rp)
-				-- Implement the effect for the specific coin result here
-				if coinResult == CoinEffects.COIN_HEADS then
-					-- Heads effect
-					Duel.Draw(tp,1,REASON_EFFECT)
-				else
-					-- Tails effect
-					Duel.Damage(tp,500,REASON_EFFECT)
-				end
-			end)
-			local e1 = CoinEffects.createCoinEffect(tc, {
-				descriptionId = coinResult + 1,
-				effectType = EFFECT_TYPE_IGNITION,
-				range = LOCATION_MZONE,
-				countLimit = 1,
-				operation = function(e,tp,eg,ep,ev,re,r,rp)
-					CoinEffects.applyEffect(tc:GetOriginalCode(), coinResult, e, tp, eg, ep, ev, re, r, rp)
-				end
-			})
-			targetCard:RegisterEffect(e1)
-		end
-	end
-end
-function s.bancon(e,tp,eg,ep,ev,re,r,rp)
-	return re:IsHasCategory(CATEGORY_COIN)
-end
-function s.banop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetFieldGroup(tp,LOCATION_ALL,LOCATION_ALL)
-	for tc in aux.Next(g) do
-		tc:RegisterFlagEffect(id,RESET_CHAIN,0,1)
-	end
+function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetCustomActivityCount(id,tp,ACTIVITY_CHAIN)==0 and Duel.CheckLPCost(tp,500) end
+	Duel.PayLPCost(tp,500)
 	local e1=Effect.CreateEffect(e:GetHandler())
-	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e1:SetCode(EVENT_TOSS_COIN_NEGATE)
-	e1:SetCondition(s.changecon)
-	e1:SetOperation(s.changeop)
-	e1:SetReset(RESET_CHAIN)
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_OATH)
+	e1:SetCode(EFFECT_CANNOT_ACTIVATE)
+	e1:SetTargetRange(1,0)
+	e1:SetValue(s.aclimit)
+	e1:SetReset(RESET_PHASE+PHASE_END)
 	Duel.RegisterEffect(e1,tp)
 end
-function s.changecon(e,tp,eg,ep,ev,re,r,rp)
-	return ev&(1<<tp)~=0
+function s.aclimit(e,re,tp)
+	return re:GetHandler():IsCode(id)
 end
-function s.changeop(e,tp,eg,ep,ev,re,r,rp)
-	local res={Duel.GetCoinResult()}
-	local ct=ev&0xff
-	for i=1,ct do res[i]=1 end
-	Duel.SetCoinResult(table.unpack(res))
+function s.thfilter(c)
+	return c:IsAbleToHand() and (c:IsSetCard(SET_SYNCHRON) or c:IsSetCard(SET_JUNK))
 end
+function s.tgfilter(c)
+	return c:IsLevelBelow(2) and (c:IsRace(RACE_WARRIOR) or c:IsRace(RACE_MACHINE)) and c:IsAbleToGrave()
+end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
+	Duel.SetPossibleOperationInfo(0,CATEGORY_TOGRAVE,nil,1,tp,LOCATION_HAND+LOCATION_DECK)
+end
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,aux.NecroValleyFilter(s.thfilter),tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil)
+	if #g>0 and Duel.SendtoHand(g,nil,REASON_EFFECT)>0 then
+		Duel.ConfirmCards(1-tp,g)
+		local tg=Duel.GetMatchingGroup(s.tgfilter,tp,LOCATION_HAND+LOCATION_DECK,0,nil)
+		if #tg>0 and Duel.SelectYesNo(tp,aux.Stringid(id,0)) then
+			Duel.BreakEffect()
+			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+			local sg=tg:Select(tp,1,1,nil)
+			Duel.SendtoGrave(sg,REASON_EFFECT)
+		end
+		--Cannot Summon from Extra Deck, except Synchro Monsters
+		local e1=Effect.CreateEffect(e:GetHandler())
+		e1:SetType(EFFECT_TYPE_FIELD)
+		e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+		e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+		e1:SetTargetRange(1,0)
+		e1:SetTarget(s.splimit)
+		e1:SetReset(RESET_PHASE+PHASE_END,2)
+		Duel.RegisterEffect(e1,tp)
+	end
+end
+function s.splimit(e,c)
+	return c:IsLocation(LOCATION_EXTRA) and not c:IsType(TYPE_SYNCHRO)
+end
+function s.shfilter(c,tp)
+	return c:IsPreviousPosition(POS_FACEUP) and c:IsPreviousControler(tp) and c:IsType(TYPE_SYNCHRO)
+		and (c:IsSetCard(SET_STARDUST) or c:IsSetCard(SET_WARRIOR))
+end
+function s.shcon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.shfilter,1,nil,tp)
+end
+function s.shtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsAbleToDeck() end
+	Duel.SetOperationInfo(0,CATEGORY_TODECK,e:GetHandler(),1,0,0)
+end
+function s.shop(e,tp,eg,ep,ev,re,r,rp)
+	if e:GetHandler():IsRelateToEffect(e) then
+		Duel.SendtoDeck(e:GetHandler(),nil,2,REASON_EFFECT)
+	end
+end
+--Version 2 of 2
+
+
+
